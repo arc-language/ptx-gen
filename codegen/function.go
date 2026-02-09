@@ -42,24 +42,54 @@ func (e *Emitter) emitFunction(f *builder.Function) {
 	e.line("}")
 }
 
-// emitFunctionSignature emits the .entry/.func line with parameters.
+// emitFunctionSignature emits the .entry/.func line with parameters and attributes.
+//
+// Output examples:
+//
+//	.visible .entry vec_add(
+//	    .param .u64 A,
+//	    .param .u64 B,
+//	    .param .u32 N
+//	)
+//
+//	.func .attribute(.unified(0xAB, 0xCD)) bar()
 func (e *Emitter) emitFunctionSignature(f *builder.Function) {
 	var prefix []string
 
-	// Linkage
+	// 1. Linkage
 	if f.Linkage != ptx.LinkNone {
 		prefix = append(prefix, f.Linkage.String())
 	}
 
-	// .entry or .func
+	// 2. .entry or .func
 	if f.IsKernel {
 		prefix = append(prefix, ".entry")
 	} else {
 		prefix = append(prefix, ".func")
 	}
 
+	// 3. Attributes (Section 5.4.8)
+	// Format: .func .attribute(...) name
+	if len(f.Attributes) > 0 {
+		var attrs []string
+		for _, attr := range f.Attributes {
+			if len(attr.Params) > 0 {
+				var pStrs []string
+				for _, p := range attr.Params {
+					pStrs = append(pStrs, fmt.Sprintf("%v", p))
+				}
+				attrs = append(attrs, fmt.Sprintf(".%s(%s)", attr.Name, strings.Join(pStrs, ", ")))
+			} else {
+				attrs = append(attrs, fmt.Sprintf(".%s", attr.Name))
+			}
+		}
+		prefix = append(prefix, fmt.Sprintf(".attribute(%s)", strings.Join(attrs, ", ")))
+	}
+
 	// For .func with return params, emit return param list before name
+	// Syntax: .func (.reg .u32 r) name ...
 	head := strings.Join(prefix, " ")
+
 	if !f.IsKernel && len(f.ReturnParams) > 0 {
 		retParts := make([]string, len(f.ReturnParams))
 		for i, rp := range f.ReturnParams {
@@ -67,8 +97,14 @@ func (e *Emitter) emitFunctionSignature(f *builder.Function) {
 		}
 		e.writef("%s (%s) %s", head, strings.Join(retParts, ", "), f.Name)
 	} else {
-		e.writeIndent()
-		e.writef("%s %s", head, f.Name)
+		// Just name
+		if len(prefix) > 0 {
+			e.writeIndent() // Ensure indentation if we started a new line logic, though usually top level
+			e.writef("%s %s", head, f.Name)
+		} else {
+			e.writeIndent()
+			e.writef("%s", f.Name)
+		}
 	}
 
 	// Input parameters
@@ -92,15 +128,19 @@ func (e *Emitter) emitFunctionSignature(f *builder.Function) {
 }
 
 // emitParamDecl formats a single parameter declaration string.
+//
+// Kernel params:  .param .u64 .ptr .global .align 8 A
+// Kernel params:  .param .u32 N
+// Kernel params:  .param .align 8 .b8 buffer[64]
+// Func params:    .reg .u32 a
 func emitParamDecl(p *builder.Param, isKernel bool) string {
 	var parts []string
 
 	if isKernel {
 		parts = append(parts, ".param")
 
-		// Alignment (for byte array params). 
-		// Skip if it's a pointer to avoid duplication (pointers handle alignment in the ptr block below).
-		if p.Align > 0 && !p.IsPointer {
+		// Alignment (for byte array params)
+		if p.Align > 0 {
 			parts = append(parts, fmt.Sprintf(".align %d", p.Align))
 		}
 
@@ -111,7 +151,7 @@ func emitParamDecl(p *builder.Param, isKernel bool) string {
 		if p.IsPointer {
 			parts = append(parts, ".ptr")
 			parts = append(parts, p.PtrSpace.String())
-			// Default alignment for pointers refers to the data pointed to
+			// Default alignment for pointers
 			if p.Align > 0 {
 				parts = append(parts, fmt.Sprintf(".align %d", p.Align))
 			}
@@ -144,6 +184,13 @@ func emitParamDecl(p *builder.Param, isKernel bool) string {
 }
 
 // emitRegisterDecls groups registers by type and emits .reg declarations.
+//
+// Output example:
+//
+//	.reg .u32  %tid, %n;
+//	.reg .u64  %a_ptr, %b_ptr, %offset;
+//	.reg .f32  %a_val, %b_val, %result;
+//	.reg .pred %p;
 func (e *Emitter) emitRegisterDecls(f *builder.Function) {
 	// Group registers by type
 	groups := make(map[ptx.Type][]*builder.Register)
@@ -181,6 +228,8 @@ func (e *Emitter) emitDirective(d *builder.Directive) {
 		e.linef(".maxnctapersm %d", d.Values[0])
 	case builder.DirPragma:
 		e.linef(".pragma \"%s\";", d.Text)
+	case builder.DirReqNCluster:
+		e.linef(".reqnctapercluster %s", joinInts(d.Values))
 	}
 }
 
