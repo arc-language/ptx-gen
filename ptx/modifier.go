@@ -338,239 +338,216 @@ const (
 	ModShapeM64N112K16
 	ModShapeM64N120K16
 	ModShapeM64N128K16
+	ModShapeM64N136K16
+	ModShapeM64N144K16
+	ModShapeM64N152K16
+	ModShapeM64N160K16
+	ModShapeM64N168K16
+	ModShapeM64N176K16
+	ModShapeM64N184K16
+	ModShapeM64N192K16
+	ModShapeM64N200K16
+	ModShapeM64N208K16
+	ModShapeM64N216K16
+	ModShapeM64N224K16
+	ModShapeM64N232K16
+	ModShapeM64N240K16
+	ModShapeM64N248K16
 	ModShapeM64N256K16
 
 	// M64 K8 shapes
 	ModShapeM64N8K8
 	ModShapeM64N16K8
+	ModShapeM64N24K8
 	ModShapeM64N32K8
+	ModShapeM64N40K8
+	ModShapeM64N48K8
+	ModShapeM64N56K8
+	ModShapeM64N64K8
+	ModShapeM64N72K8
+	ModShapeM64N80K8
+	ModShapeM64N88K8
+	ModShapeM64N96K8
+	ModShapeM64N104K8
+	ModShapeM64N112K8
+	ModShapeM64N120K8
+	ModShapeM64N128K8
+	ModShapeM64N136K8
+	ModShapeM64N144K8
+	ModShapeM64N152K8
+	ModShapeM64N160K8
+	ModShapeM64N168K8
+	ModShapeM64N176K8
+	ModShapeM64N184K8
+	ModShapeM64N192K8
+	ModShapeM64N200K8
+	ModShapeM64N208K8
+	ModShapeM64N216K8
+	ModShapeM64N224K8
+	ModShapeM64N232K8
+	ModShapeM64N240K8
+	ModShapeM64N248K8
+	ModShapeM64N256K8
 
 	// M64 K32 shapes
 	ModShapeM64N8K32
 	ModShapeM64N16K32
+	ModShapeM64N24K32
 	ModShapeM64N32K32
+	ModShapeM64N40K32
+	ModShapeM64N48K32
+	ModShapeM64N56K32
+	ModShapeM64N64K32
+	ModShapeM64N72K32
+	ModShapeM64N80K32
+	ModShapeM64N88K32
+	ModShapeM64N96K32
+	ModShapeM64N104K32
+	ModShapeM64N112K32
+	ModShapeM64N120K32
+	ModShapeM64N128K32
+	ModShapeM64N136K32
+	ModShapeM64N144K32
+	ModShapeM64N152K32
+	ModShapeM64N160K32
+	ModShapeM64N168K32
+	ModShapeM64N176K32
+	ModShapeM64N184K32
+	ModShapeM64N192K32
+	ModShapeM64N208K32
+	ModShapeM64N224K32
+	ModShapeM64N240K32
+	ModShapeM64N256K32
 
 	// M64 K64 shapes
 	ModShapeM64N8K64
+	ModShapeM64N16K64
+	ModShapeM64N24K64
+	ModShapeM64N32K64
+	ModShapeM64N40K64
+	ModShapeM64N48K64
+	ModShapeM64N56K64
+	ModShapeM64N64K64
+	ModShapeM64N72K64
+	ModShapeM64N80K64
+	ModShapeM64N88K64
+	ModShapeM64N96K64
+	ModShapeM64N104K64
+	ModShapeM64N112K64
+	ModShapeM64N120K64
+	ModShapeM64N128K64
+	ModShapeM64N136K64
+	ModShapeM64N144K64
+	ModShapeM64N152K64
+	ModShapeM64N160K64
+	ModShapeM64N168K64
+	ModShapeM64N176K64
+	ModShapeM64N184K64
+	ModShapeM64N192K64
+	ModShapeM64N200K64
+	ModShapeM64N208K64
+	ModShapeM64N216K64
+	ModShapeM64N224K64
+	ModShapeM64N232K64
+	ModShapeM64N240K64
+	ModShapeM64N248K64
+	ModShapeM64N256K64
 
 	// M64 K256 shapes
 	ModShapeM64N8K256
+	ModShapeM64N16K256
+	ModShapeM64N24K256
+	ModShapeM64N32K256
+	ModShapeM64N48K256
+	ModShapeM64N64K256
+	ModShapeM64N80K256
+	ModShapeM64N96K256
+	ModShapeM64N112K256
+	ModShapeM64N128K256
+	ModShapeM64N144K256
+	ModShapeM64N160K256
+	ModShapeM64N176K256
+	ModShapeM64N192K256
+	ModShapeM64N208K256
+	ModShapeM64N224K256
+	ModShapeM64N240K256
+	ModShapeM64N256K256
 
+	// Tcgen05 data movement shapes (ld/st)
+	ModShape16x64b
+	ModShape16x128b
+	ModShape16x256b
+	ModShape16x32bx2
+	ModShape32x32b
 
-    ModShapeM64N136K16
-    ModShapeM64N144K16
-    ModShapeM64N152K16
-    ModShapeM64N160K16
-    ModShapeM64N168K16
-    ModShapeM64N176K16
-    ModShapeM64N184K16
-    ModShapeM64N192K16
-    ModShapeM64N200K16
-    ModShapeM64N208K16
-    ModShapeM64N216K16
-    ModShapeM64N224K16
-    ModShapeM64N232K16
-    ModShapeM64N240K16
-    ModShapeM64N248K16
+	// Tcgen05 data movement shapes (cp)
+	ModShape4x256b
+	ModShape32x128b
+	ModShape64x128b
+	ModShape128x256b
+	ModShape128x128b
 
-    // M64 N* K8 (tf32)
-    ModShapeM64N24K8
-    ModShapeM64N40K8
-    ModShapeM64N48K8
-    ModShapeM64N56K8
-    ModShapeM64N64K8
-    ModShapeM64N72K8
-    ModShapeM64N80K8
-    ModShapeM64N88K8
-    ModShapeM64N96K8
-    ModShapeM64N104K8
-    ModShapeM64N112K8
-    ModShapeM64N120K8
-    ModShapeM64N128K8
-    ModShapeM64N136K8
-    ModShapeM64N144K8
-    ModShapeM64N152K8
-    ModShapeM64N160K8
-    ModShapeM64N168K8
-    ModShapeM64N176K8
-    ModShapeM64N184K8
-    ModShapeM64N192K8
-    ModShapeM64N200K8
-    ModShapeM64N208K8
-    ModShapeM64N216K8
-    ModShapeM64N224K8
-    ModShapeM64N232K8
-    ModShapeM64N240K8
-    ModShapeM64N248K8
-    ModShapeM64N256K8
+	// Tcgen05 shift shape
+	ModShape31x256b
 
-    // M64 N* K32 (fp8, int)
-    ModShapeM64N24K32
-    ModShapeM64N40K32
-    ModShapeM64N48K32
-    ModShapeM64N56K32
-    ModShapeM64N64K32
-    ModShapeM64N72K32
-    ModShapeM64N80K32
-    ModShapeM64N88K32
-    ModShapeM64N96K32
-    ModShapeM64N104K32
-    ModShapeM64N112K32
-    ModShapeM64N120K32
-    ModShapeM64N128K32
-    ModShapeM64N136K32
-    ModShapeM64N144K32
-    ModShapeM64N152K32
-    ModShapeM64N160K32
-    ModShapeM64N168K32
-    ModShapeM64N176K32
-    ModShapeM64N184K32
-    ModShapeM64N192K32
-    ModShapeM64N208K32
-    ModShapeM64N224K32
-    ModShapeM64N240K32
-    ModShapeM64N256K32
+	// Tcgen05 MMA kinds
+	ModKindF16
+	ModKindTf32
+	ModKindF8f6f4
+	ModKindI8
 
-    // M64 N* K256 (b1)
-    ModShapeM64N16K256
-    ModShapeM64N24K256
-    ModShapeM64N32K256
-    ModShapeM64N48K256
-    ModShapeM64N64K256
-    ModShapeM64N80K256
-    ModShapeM64N96K256
-    ModShapeM64N112K256
-    ModShapeM64N128K256
-    ModShapeM64N144K256
-    ModShapeM64N160K256
-    ModShapeM64N176K256
-    ModShapeM64N192K256
-    ModShapeM64N208K256
-    ModShapeM64N224K256
-    ModShapeM64N240K256
-    ModShapeM64N256K256
+	// Tcgen05 wait operations
+	ModWaitLd
+	ModWaitSt
 
+	// Swizzle modes
+	ModSwizzle32B
+	ModSwizzle64B
+	ModSwizzle128B
 
+	// Tcgen05 reduction ops (ld.red)
+	ModRedMin
+	ModRedMax
 
-    ModShapeM64N16K64
-    ModShapeM64N24K64
-    ModShapeM64N32K64
-    ModShapeM64N40K64
-    ModShapeM64N48K64
-    ModShapeM64N56K64
-    ModShapeM64N64K64
-    ModShapeM64N72K64
-    ModShapeM64N80K64
-    ModShapeM64N88K64
-    ModShapeM64N96K64
-    ModShapeM64N104K64
-    ModShapeM64N112K64
-    ModShapeM64N120K64
-    ModShapeM64N128K64
-    ModShapeM64N136K64
-    ModShapeM64N144K64
-    ModShapeM64N152K64
-    ModShapeM64N160K64
-    ModShapeM64N168K64
-    ModShapeM64N176K64
-    ModShapeM64N184K64
-    ModShapeM64N192K64
-    ModShapeM64N200K64
-    ModShapeM64N208K64
-    ModShapeM64N216K64
-    ModShapeM64N224K64
-    ModShapeM64N232K64
-    ModShapeM64N240K64
-    ModShapeM64N248K64
-    ModShapeM64N256K64
+	// Tcgen05 pack/unpack
+	ModPack16b
+	ModUnpack16b
 
+	// Tcgen05 copy multicast
+	ModMulticastWarpX2_02_13
+	ModMulticastWarpX2_01_23
+	ModMulticastWarpX4
 
+	// Tcgen05 shift direction
+	ModShiftDown
 
-	// --- Tcgen05 Data Movement Shapes (ld/st) ---
-    ModShape16x64b
-    ModShape16x128b
-    ModShape16x256b
-    ModShape16x32bx2
-    ModShape32x32b
+	// Tcgen05 block scaling aliases
+	ModBlock16
+	ModBlock32
 
-    // --- Tcgen05 Data Movement Shapes (cp) ---
-    ModShape4x256b
-    ModShape32x128b
-    ModShape64x128b
-    ModShape128x256b
-    ModShape128x128b
-    
-    // --- Tcgen05 Shift Shape ---
-    ModShape31x256b
+	// Tcgen05 MMA modifiers
+	ModWS
+	ModAShift
 
-    // --- Tcgen05 MMA Kinds ---
-    ModKindF16      // .kind::f16
-    ModKindTf32     // .kind::tf32
-    ModKindF8f6f4   // .kind::f8f6f4
-    ModKindI8       // .kind::i8
+	// Tcgen05 collector usage
+	ModCollector
+	ModBufA
+	ModBufB0
+	ModBufB1
+	ModBufB2
+	ModBufB3
+	ModOpFill
+	ModOpUse
+	ModOpLastUse
+	ModOpDiscard
 
-    // --- Tcgen05 Wait Operations ---
-    ModWaitLd // .wait::ld
-    ModWaitSt // .wait::st
+	// Tcgen05 fence synchronization
+	ModBeforeThreadSync
+	ModAfterThreadSync
 
-    // --- Swizzle Modes (for Descriptors) ---
-    ModSwizzle32B  // 32-Byte swizzle
-    ModSwizzle64B  // 64-Byte swizzle
-    ModSwizzle128B // 128-Byte swizzle
-
-
-	// --- Tcgen05 Reduction Ops (ld.red) ---
-    ModRedMin
-    ModRedMax
-
-    // --- Tcgen05 Pack/Unpack ---
-    ModPack16b   // .pack::16b
-    ModUnpack16b // .unpack::16b
-
-    // --- Tcgen05 Copy Multicast ---
-    ModMulticastWarpX2_02_13 // .warpx2::02_13
-    ModMulticastWarpX2_01_23 // .warpx2::01_23
-    ModMulticastWarpX4       // .warpx4
-
-    // --- Tcgen05 Shift Direction ---
-    ModShiftDown // .down
-
-	// --- Tcgen05 Block Scaling Aliases ---
-    ModBlock16      // .block16 (alias for .scale_vec::4X)
-    ModBlock32      // .block32 (alias for .scale_vec::1X or .scale_vec::2X)
-
-
-// --- Tcgen05 MMA Modifiers ---
-    ModWS         // .ws
-
-    ModAShift     // .ashift
-
-
-
-    // --- Tcgen05 Collector Usage ---
-    ModCollector // .collector
-    ModBufA      // ::a
-    ModBufB0     // ::b0
-    ModBufB1     // ::b1
-    ModBufB2     // ::b2
-    ModBufB3     // ::b3
-    ModOpFill    // ::fill
-    ModOpUse     // ::use
-    ModOpLastUse // ::lastuse
-    ModOpDiscard // ::discard
-
-    // --- Tcgen05 Fence Synchronization ---
-    ModBeforeThreadSync // ::before_thread_sync
-    ModAfterThreadSync  // ::after_thread_sync
-
-	// Missing Type Modifiers
-    ModTypeB32 // .b32
-
-    // Missing Operation Modifiers
-    ModRed // .red (for tcgen05.ld.red)
-
-
-
+	// Miscellaneous
+	ModTypeB32
+	ModRed
 )
 
 func (m Modifier) String() string {
@@ -971,6 +948,16 @@ func (m Modifier) String() string {
 		return ".m16n8k64"
 	case ModShapeM16N8K128:
 		return ".m16n8k128"
+	case ModShapeM16N8K256:
+		return ".m16n8k256"
+	case ModShapeM8N8:
+		return ".m8n8"
+	case ModShapeM16N16:
+		return ".m16n16"
+	case ModShapeM8N16:
+		return ".m8n16"
+	case ModShapeM16N8:
+		return ".m16n8"
 	case ModPopc:
 		return ".popc"
 	case ModTypeF16:
@@ -995,16 +982,6 @@ func (m Modifier) String() string {
 		return ".u4"
 	case ModTypeB1:
 		return ".b1"
-	case ModShapeM16N8K256:
-		return ".m16n8k256"
-	case ModShapeM8N8:
-		return ".m8n8"
-	case ModShapeM16N16:
-		return ".m16n16"
-	case ModShapeM8N16:
-		return ".m8n16"
-	case ModShapeM16N8:
-		return ".m16n8"
 	case ModNumX1:
 		return ".x1"
 	case ModNumX2:
@@ -1025,115 +1002,418 @@ func (m Modifier) String() string {
 		return ".sp"
 	case ModSpOrderedMetadata:
 		return ".sp::ordered_metadata"
+
+	// M64 K16 shapes
 	case ModShapeM64N8K16:
 		return ".m64n8k16"
 	case ModShapeM64N16K16:
 		return ".m64n16k16"
+	case ModShapeM64N24K16:
+		return ".m64n24k16"
 	case ModShapeM64N32K16:
 		return ".m64n32k16"
+	case ModShapeM64N40K16:
+		return ".m64n40k16"
+	case ModShapeM64N48K16:
+		return ".m64n48k16"
+	case ModShapeM64N56K16:
+		return ".m64n56k16"
 	case ModShapeM64N64K16:
 		return ".m64n64k16"
+	case ModShapeM64N72K16:
+		return ".m64n72k16"
+	case ModShapeM64N80K16:
+		return ".m64n80k16"
+	case ModShapeM64N88K16:
+		return ".m64n88k16"
+	case ModShapeM64N96K16:
+		return ".m64n96k16"
+	case ModShapeM64N104K16:
+		return ".m64n104k16"
+	case ModShapeM64N112K16:
+		return ".m64n112k16"
+	case ModShapeM64N120K16:
+		return ".m64n120k16"
 	case ModShapeM64N128K16:
 		return ".m64n128k16"
+	case ModShapeM64N136K16:
+		return ".m64n136k16"
+	case ModShapeM64N144K16:
+		return ".m64n144k16"
+	case ModShapeM64N152K16:
+		return ".m64n152k16"
+	case ModShapeM64N160K16:
+		return ".m64n160k16"
+	case ModShapeM64N168K16:
+		return ".m64n168k16"
+	case ModShapeM64N176K16:
+		return ".m64n176k16"
+	case ModShapeM64N184K16:
+		return ".m64n184k16"
+	case ModShapeM64N192K16:
+		return ".m64n192k16"
+	case ModShapeM64N200K16:
+		return ".m64n200k16"
+	case ModShapeM64N208K16:
+		return ".m64n208k16"
+	case ModShapeM64N216K16:
+		return ".m64n216k16"
+	case ModShapeM64N224K16:
+		return ".m64n224k16"
+	case ModShapeM64N232K16:
+		return ".m64n232k16"
+	case ModShapeM64N240K16:
+		return ".m64n240k16"
+	case ModShapeM64N248K16:
+		return ".m64n248k16"
 	case ModShapeM64N256K16:
 		return ".m64n256k16"
+
+	// M64 K8 shapes
 	case ModShapeM64N8K8:
 		return ".m64n8k8"
+	case ModShapeM64N16K8:
+		return ".m64n16k8"
+	case ModShapeM64N24K8:
+		return ".m64n24k8"
 	case ModShapeM64N32K8:
 		return ".m64n32k8"
+	case ModShapeM64N40K8:
+		return ".m64n40k8"
+	case ModShapeM64N48K8:
+		return ".m64n48k8"
+	case ModShapeM64N56K8:
+		return ".m64n56k8"
+	case ModShapeM64N64K8:
+		return ".m64n64k8"
+	case ModShapeM64N72K8:
+		return ".m64n72k8"
+	case ModShapeM64N80K8:
+		return ".m64n80k8"
+	case ModShapeM64N88K8:
+		return ".m64n88k8"
+	case ModShapeM64N96K8:
+		return ".m64n96k8"
+	case ModShapeM64N104K8:
+		return ".m64n104k8"
+	case ModShapeM64N112K8:
+		return ".m64n112k8"
+	case ModShapeM64N120K8:
+		return ".m64n120k8"
+	case ModShapeM64N128K8:
+		return ".m64n128k8"
+	case ModShapeM64N136K8:
+		return ".m64n136k8"
+	case ModShapeM64N144K8:
+		return ".m64n144k8"
+	case ModShapeM64N152K8:
+		return ".m64n152k8"
+	case ModShapeM64N160K8:
+		return ".m64n160k8"
+	case ModShapeM64N168K8:
+		return ".m64n168k8"
+	case ModShapeM64N176K8:
+		return ".m64n176k8"
+	case ModShapeM64N184K8:
+		return ".m64n184k8"
+	case ModShapeM64N192K8:
+		return ".m64n192k8"
+	case ModShapeM64N200K8:
+		return ".m64n200k8"
+	case ModShapeM64N208K8:
+		return ".m64n208k8"
+	case ModShapeM64N216K8:
+		return ".m64n216k8"
+	case ModShapeM64N224K8:
+		return ".m64n224k8"
+	case ModShapeM64N232K8:
+		return ".m64n232k8"
+	case ModShapeM64N240K8:
+		return ".m64n240k8"
+	case ModShapeM64N248K8:
+		return ".m64n248k8"
+	case ModShapeM64N256K8:
+		return ".m64n256k8"
+
+	// M64 K32 shapes
 	case ModShapeM64N8K32:
 		return ".m64n8k32"
+	case ModShapeM64N16K32:
+		return ".m64n16k32"
+	case ModShapeM64N24K32:
+		return ".m64n24k32"
 	case ModShapeM64N32K32:
 		return ".m64n32k32"
+	case ModShapeM64N40K32:
+		return ".m64n40k32"
+	case ModShapeM64N48K32:
+		return ".m64n48k32"
+	case ModShapeM64N56K32:
+		return ".m64n56k32"
+	case ModShapeM64N64K32:
+		return ".m64n64k32"
+	case ModShapeM64N72K32:
+		return ".m64n72k32"
+	case ModShapeM64N80K32:
+		return ".m64n80k32"
+	case ModShapeM64N88K32:
+		return ".m64n88k32"
+	case ModShapeM64N96K32:
+		return ".m64n96k32"
+	case ModShapeM64N104K32:
+		return ".m64n104k32"
+	case ModShapeM64N112K32:
+		return ".m64n112k32"
+	case ModShapeM64N120K32:
+		return ".m64n120k32"
+	case ModShapeM64N128K32:
+		return ".m64n128k32"
+	case ModShapeM64N136K32:
+		return ".m64n136k32"
+	case ModShapeM64N144K32:
+		return ".m64n144k32"
+	case ModShapeM64N152K32:
+		return ".m64n152k32"
+	case ModShapeM64N160K32:
+		return ".m64n160k32"
+	case ModShapeM64N168K32:
+		return ".m64n168k32"
+	case ModShapeM64N176K32:
+		return ".m64n176k32"
+	case ModShapeM64N184K32:
+		return ".m64n184k32"
+	case ModShapeM64N192K32:
+		return ".m64n192k32"
+	case ModShapeM64N208K32:
+		return ".m64n208k32"
+	case ModShapeM64N224K32:
+		return ".m64n224k32"
+	case ModShapeM64N240K32:
+		return ".m64n240k32"
+	case ModShapeM64N256K32:
+		return ".m64n256k32"
 
+	// M64 K64 shapes
+	case ModShapeM64N8K64:
+		return ".m64n8k64"
+	case ModShapeM64N16K64:
+		return ".m64n16k64"
+	case ModShapeM64N24K64:
+		return ".m64n24k64"
+	case ModShapeM64N32K64:
+		return ".m64n32k64"
+	case ModShapeM64N40K64:
+		return ".m64n40k64"
+	case ModShapeM64N48K64:
+		return ".m64n48k64"
+	case ModShapeM64N56K64:
+		return ".m64n56k64"
+	case ModShapeM64N64K64:
+		return ".m64n64k64"
+	case ModShapeM64N72K64:
+		return ".m64n72k64"
+	case ModShapeM64N80K64:
+		return ".m64n80k64"
+	case ModShapeM64N88K64:
+		return ".m64n88k64"
+	case ModShapeM64N96K64:
+		return ".m64n96k64"
+	case ModShapeM64N104K64:
+		return ".m64n104k64"
+	case ModShapeM64N112K64:
+		return ".m64n112k64"
+	case ModShapeM64N120K64:
+		return ".m64n120k64"
+	case ModShapeM64N128K64:
+		return ".m64n128k64"
+	case ModShapeM64N136K64:
+		return ".m64n136k64"
+	case ModShapeM64N144K64:
+		return ".m64n144k64"
+	case ModShapeM64N152K64:
+		return ".m64n152k64"
+	case ModShapeM64N160K64:
+		return ".m64n160k64"
+	case ModShapeM64N168K64:
+		return ".m64n168k64"
+	case ModShapeM64N176K64:
+		return ".m64n176k64"
+	case ModShapeM64N184K64:
+		return ".m64n184k64"
+	case ModShapeM64N192K64:
+		return ".m64n192k64"
+	case ModShapeM64N200K64:
+		return ".m64n200k64"
+	case ModShapeM64N208K64:
+		return ".m64n208k64"
+	case ModShapeM64N216K64:
+		return ".m64n216k64"
+	case ModShapeM64N224K64:
+		return ".m64n224k64"
+	case ModShapeM64N232K64:
+		return ".m64n232k64"
+	case ModShapeM64N240K64:
+		return ".m64n240k64"
+	case ModShapeM64N248K64:
+		return ".m64n248k64"
+	case ModShapeM64N256K64:
+		return ".m64n256k64"
 
+	// M64 K256 shapes
+	case ModShapeM64N8K256:
+		return ".m64n8k256"
+	case ModShapeM64N16K256:
+		return ".m64n16k256"
+	case ModShapeM64N24K256:
+		return ".m64n24k256"
+	case ModShapeM64N32K256:
+		return ".m64n32k256"
+	case ModShapeM64N48K256:
+		return ".m64n48k256"
+	case ModShapeM64N64K256:
+		return ".m64n64k256"
+	case ModShapeM64N80K256:
+		return ".m64n80k256"
+	case ModShapeM64N96K256:
+		return ".m64n96k256"
+	case ModShapeM64N112K256:
+		return ".m64n112k256"
+	case ModShapeM64N128K256:
+		return ".m64n128k256"
+	case ModShapeM64N144K256:
+		return ".m64n144k256"
+	case ModShapeM64N160K256:
+		return ".m64n160k256"
+	case ModShapeM64N176K256:
+		return ".m64n176k256"
+	case ModShapeM64N192K256:
+		return ".m64n192k256"
+	case ModShapeM64N208K256:
+		return ".m64n208k256"
+	case ModShapeM64N224K256:
+		return ".m64n224k256"
+	case ModShapeM64N240K256:
+		return ".m64n240k256"
+	case ModShapeM64N256K256:
+		return ".m64n256k256"
 
-    // ... (map the rest of the K16 constants similarly)
+	// Tcgen05 data movement shapes
+	case ModShape16x64b:
+		return ".16x64b"
+	case ModShape16x128b:
+		return ".16x128b"
+	case ModShape16x256b:
+		return ".16x256b"
+	case ModShape16x32bx2:
+		return ".16x32bx2"
+	case ModShape32x32b:
+		return ".32x32b"
+	case ModShape4x256b:
+		return ".4x256b"
+	case ModShape32x128b:
+		return ".32x128b"
+	case ModShape64x128b:
+		return ".64x128b"
+	case ModShape128x256b:
+		return ".128x256b"
+	case ModShape128x128b:
+		return ".128x128b"
+	case ModShape31x256b:
+		return ".31x256b"
 
-    case ModShapeM64N16K8: return ".m64n16k8"
-    // ... (map the rest of the K8 constants)
+	// Tcgen05 MMA kinds
+	case ModKindF16:
+		return ".kind::f16"
+	case ModKindTf32:
+		return ".kind::tf32"
+	case ModKindF8f6f4:
+		return ".kind::f8f6f4"
+	case ModKindI8:
+		return ".kind::i8"
 
-    case ModShapeM64N16K32: return ".m64n16k32"
+	// Tcgen05 wait operations
+	case ModWaitLd:
+		return "::ld"
+	case ModWaitSt:
+		return "::st"
 
-    case ModShapeM64N8K256: return ".m64n8k256"
-    // ... (map the rest of the K256 constants)
+	// Swizzle modes
+	case ModSwizzle32B:
+		return ".swizzle::32b"
+	case ModSwizzle64B:
+		return ".swizzle::64b"
+	case ModSwizzle128B:
+		return ".swizzle::128b"
 
+	// Tcgen05 reduction ops
+	case ModRedMin:
+		return ".min"
+	case ModRedMax:
+		return ".max"
 
+	// Tcgen05 pack/unpack
+	case ModPack16b:
+		return ".pack::16b"
+	case ModUnpack16b:
+		return ".unpack::16b"
 
-	case ModShapeM64N8K64: return ".m64n8k64"
-    case ModShapeM64N16K64: return ".m64n16k64"
-    case ModShapeM64N24K64: return ".m64n24k64"
-    case ModShapeM64N32K64: return ".m64n32k64"
-    case ModShapeM64N48K64: return ".m64n48k64"
-    case ModShapeM64N64K64: return ".m64n64k64"
-    case ModShapeM64N80K64: return ".m64n80k64"
-    case ModShapeM64N96K64: return ".m64n96k64"
-    case ModShapeM64N112K64: return ".m64n112k64"
-    case ModShapeM64N128K64: return ".m64n128k64"
-    case ModShapeM64N144K64: return ".m64n144k64"
-    case ModShapeM64N160K64: return ".m64n160k64"
-    case ModShapeM64N176K64: return ".m64n176k64"
-    case ModShapeM64N192K64: return ".m64n192k64"
-    case ModShapeM64N208K64: return ".m64n208k64"
-    case ModShapeM64N224K64: return ".m64n224k64"
-    case ModShapeM64N240K64: return ".m64n240k64"
-    case ModShapeM64N256K64: return ".m64n256k64"
+	// Tcgen05 copy multicast
+	case ModMulticastWarpX2_02_13:
+		return ".warpx2::02_13"
+	case ModMulticastWarpX2_01_23:
+		return ".warpx2::01_23"
+	case ModMulticastWarpX4:
+		return ".warpx4"
 
+	// Tcgen05 shift direction
+	case ModShiftDown:
+		return ".down"
 
-	case ModShape16x64b: return ".16x64b"
-    case ModShape16x128b: return ".16x128b"
-    case ModShape16x256b: return ".16x256b"
-    case ModShape16x32bx2: return ".16x32bx2"
-    case ModShape32x32b: return ".32x32b"
-    case ModShape4x256b: return ".4x256b"
-    case ModShape32x128b: return ".32x128b"
-    case ModShape64x128b: return ".64x128b"
-    case ModShape128x256b: return ".128x256b"
-    case ModShape128x128b: return ".128x128b"
-    case ModShape31x256b: return ".31x256b"
+	// Tcgen05 block scaling aliases
+	case ModBlock16:
+		return ".block16"
+	case ModBlock32:
+		return ".block32"
 
-    case ModKindF16: return ".kind::f16"
-    case ModKindTf32: return ".kind::tf32"
-    case ModKindF8f6f4: return ".kind::f8f6f4"
-    case ModKindI8: return ".kind::i8"
+	// Tcgen05 MMA modifiers
+	case ModWS:
+		return ".ws"
+	case ModAShift:
+		return ".ashift"
 
-    case ModWaitLd: return "::ld"
-    case ModWaitSt: return "::st"
+	// Tcgen05 collector usage
+	case ModCollector:
+		return ".collector"
+	case ModBufA:
+		return "::a"
+	case ModBufB0:
+		return "::b0"
+	case ModBufB1:
+		return "::b1"
+	case ModBufB2:
+		return "::b2"
+	case ModBufB3:
+		return "::b3"
+	case ModOpFill:
+		return "::fill"
+	case ModOpUse:
+		return "::use"
+	case ModOpLastUse:
+		return "::lastuse"
+	case ModOpDiscard:
+		return "::discard"
 
+	// Tcgen05 fence synchronization
+	case ModBeforeThreadSync:
+		return "::before_thread_sync"
+	case ModAfterThreadSync:
+		return "::after_thread_sync"
 
-	case ModRedMin: return ".min"
-    case ModRedMax: return ".max"
-    case ModPack16b: return ".pack::16b"
-    case ModUnpack16b: return ".unpack::16b"
-    case ModMulticastWarpX2_02_13: return ".warpx2::02_13"
-    case ModMulticastWarpX2_01_23: return ".warpx2::01_23"
-    case ModMulticastWarpX4: return ".warpx4"
-    case ModShiftDown: return ".down"
-
-	case ModBlock16: return ".block16"
-    case ModBlock32: return ".block32"
-
-
-	case ModWS: return ".ws"
-    case ModAShift: return ".ashift"
-
-
-    case ModCollector: return ".collector"
-    case ModBufA: return "::a"
-    case ModBufB0: return "::b0"
-    case ModBufB1: return "::b1"
-    case ModBufB2: return "::b2"
-    case ModBufB3: return "::b3"
-    case ModOpFill: return "::fill"
-    case ModOpUse: return "::use"
-    case ModOpLastUse: return "::lastuse"
-    case ModOpDiscard: return "::discard"
-
-    case ModBeforeThreadSync: return "::before_thread_sync"
-    case ModAfterThreadSync: return "::after_thread_sync"
-
-	case ModTypeB32: return ".b32"
-    case ModRed: return ".red"
+	// Miscellaneous
+	case ModTypeB32:
+		return ".b32"
+	case ModRed:
+		return ".red"
 
 	default:
 		return ""

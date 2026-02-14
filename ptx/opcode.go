@@ -155,7 +155,6 @@ const (
 	// Tensor map
 	OpTensorMap
 	OpTensormapReplace
-	OpMapA
 	OpMapa
 	OpGetCTARank
 
@@ -212,11 +211,6 @@ const (
 	OpClusterlaunchcontrolTryCancel
 	OpClusterlaunchcontrolQueryCancel
 
-	// Warp matrix aliases
-	OpLdmatrix
-	OpStmatrix
-	OpMovmatrix
-
 	// WGMMA
 	OpWgmmaFence
 	OpWgmmaCommitGroup
@@ -224,20 +218,18 @@ const (
 	OpWgmmaMmaAsync
 	OpFenceProxyAsync
 
-	// --- Tensor Core Gen 5 (sm_100+) ---
-    OpTcgen05Alloc Opcode = iota + 1000 // Ensure unique ID
-    OpTcgen05Dealloc
-    OpTcgen05RelinquishAllocPermit
-    OpTcgen05Ld
-    OpTcgen05St
-    OpTcgen05Cp
-    OpTcgen05Shift
-    OpTcgen05Mma
-    OpTcgen05Commit
-    OpTcgen05Wait
-    OpTcgen05Fence
-
-
+	// Tensor Core Gen 5 (sm_100+)
+	OpTcgen05Alloc
+	OpTcgen05Dealloc
+	OpTcgen05RelinquishAllocPermit
+	OpTcgen05Ld
+	OpTcgen05St
+	OpTcgen05Cp
+	OpTcgen05Shift
+	OpTcgen05Mma
+	OpTcgen05Commit
+	OpTcgen05Wait
+	OpTcgen05Fence
 )
 
 func (o Opcode) String() string {
@@ -407,7 +399,7 @@ func (o Opcode) String() string {
 	case OpBar:
 		return "bar.sync"
 	case OpBarWarp:
-		return "bar.warp.sync"
+		return "bar.warp"
 	case OpBarWarpSync:
 		return "bar.warp.sync"
 	case OpBarrierCluster:
@@ -494,8 +486,6 @@ func (o Opcode) String() string {
 		return "tensormap"
 	case OpTensormapReplace:
 		return "tensormap.replace"
-	case OpMapA:
-		return "mapa"
 	case OpMapa:
 		return "mapa"
 	case OpGetCTARank:
@@ -590,12 +580,6 @@ func (o Opcode) String() string {
 		return "clusterlaunchcontrol.try_cancel"
 	case OpClusterlaunchcontrolQueryCancel:
 		return "clusterlaunchcontrol.query_cancel"
-	case OpLdmatrix:
-		return "ldmatrix"
-	case OpStmatrix:
-		return "stmatrix"
-	case OpMovmatrix:
-		return "movmatrix"
 	case OpWgmmaFence:
 		return "wgmma.fence"
 	case OpWgmmaCommitGroup:
@@ -606,32 +590,28 @@ func (o Opcode) String() string {
 		return "wgmma.mma_async"
 	case OpFenceProxyAsync:
 		return "fence.proxy.async"
-
-
-	case OpTcgen05Alloc: 
+	case OpTcgen05Alloc:
 		return "tcgen05.alloc"
-    case OpTcgen05Dealloc: 
+	case OpTcgen05Dealloc:
 		return "tcgen05.dealloc"
-    case OpTcgen05RelinquishAllocPermit: 
+	case OpTcgen05RelinquishAllocPermit:
 		return "tcgen05.relinquish_alloc_permit"
-    case OpTcgen05Ld: 
+	case OpTcgen05Ld:
 		return "tcgen05.ld"
-    case OpTcgen05St: 
+	case OpTcgen05St:
 		return "tcgen05.st"
-    case OpTcgen05Cp: 
+	case OpTcgen05Cp:
 		return "tcgen05.cp"
-    case OpTcgen05Shift: 
+	case OpTcgen05Shift:
 		return "tcgen05.shift"
-    case OpTcgen05Mma: 
+	case OpTcgen05Mma:
 		return "tcgen05.mma"
-    case OpTcgen05Commit: 
+	case OpTcgen05Commit:
 		return "tcgen05.commit"
-    case OpTcgen05Wait: 
+	case OpTcgen05Wait:
 		return "tcgen05.wait"
-    case OpTcgen05Fence: 
+	case OpTcgen05Fence:
 		return "tcgen05.fence"
-
-
 	default:
 		return "unknown"
 	}
