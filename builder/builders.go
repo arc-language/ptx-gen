@@ -1626,3 +1626,46 @@ func buildVideoInst(op ptx.Opcode, m1, m2, m3 ptx.Modifier, dst, a, b Operand, e
         Modifiers: mods,
     }
 }
+
+
+// Pmevent triggers a single performance monitor event.
+// a: immediate operand (0..15)
+func Pmevent(a Operand) *Instruction {
+    return &Instruction{
+        Op:  ptx.OpPmevent,
+        Src: []Operand{a},
+    }
+}
+
+// PmeventMask triggers one or more performance monitor events via a mask.
+// mask: 16-bit immediate mask
+func PmeventMask(mask Operand) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpPmevent,
+        Src:       []Operand{mask},
+        Modifiers: []ptx.Modifier{ptx.ModMask},
+    }
+}
+
+// Trap aborts execution and generates an interrupt.
+func Trap() *Instruction {
+    return &Instruction{Op: ptx.OpTrap}
+}
+
+// SetMaxNReg hints to change the number of registers owned by the warp.
+// action: ptx.ModInc or ptx.ModDec
+// count: immediate integer (24..256, multiple of 8)
+//
+// Syntax: setmaxnreg.action.sync.aligned.u32 imm-reg-count;
+func SetMaxNReg(action ptx.Modifier, count Operand) *Instruction {
+    return &Instruction{
+        Op:  ptx.OpSetMaxNReg, // Ensure this Opcode is defined in opcode.go
+        Src: []Operand{count},
+        Modifiers: []ptx.Modifier{
+            action,
+            ptx.ModSync,
+            ptx.ModAligned,
+            ptx.ModTypeU32,
+        },
+    }
+}

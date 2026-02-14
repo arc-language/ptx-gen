@@ -302,6 +302,11 @@ const (
 	ModTypeS4
 	ModTypeU4
 	ModTypeB1
+	ModTypeB32
+	ModTypeB64
+	ModTypeU32
+	ModTypeS64
+	ModTypeU64
 
 	// Matrix counts (.num)
 	ModNumX1
@@ -320,40 +325,6 @@ const (
 	// Sparse MMA
 	ModSp
 	ModSpOrderedMetadata
-
-	// M64 K16 shapes
-	ModShapeM64N8K16
-	ModShapeM64N16K16
-	ModShapeM64N24K16
-	ModShapeM64N32K16
-	ModShapeM64N40K16
-	ModShapeM64N48K16
-	ModShapeM64N56K16
-	ModShapeM64N64K16
-	ModShapeM64N72K16
-	ModShapeM64N80K16
-	ModShapeM64N88K16
-	ModShapeM64N96K16
-	ModShapeM64N104K16
-	ModShapeM64N112K16
-	ModShapeM64N120K16
-	ModShapeM64N128K16
-	ModShapeM64N136K16
-	ModShapeM64N144K16
-	ModShapeM64N152K16
-	ModShapeM64N160K16
-	ModShapeM64N168K16
-	ModShapeM64N176K16
-	ModShapeM64N184K16
-	ModShapeM64N192K16
-	ModShapeM64N200K16
-	ModShapeM64N208K16
-	ModShapeM64N216K16
-	ModShapeM64N224K16
-	ModShapeM64N232K16
-	ModShapeM64N240K16
-	ModShapeM64N248K16
-	ModShapeM64N256K16
 
 	// M64 K8 shapes
 	ModShapeM64N8K8
@@ -388,6 +359,40 @@ const (
 	ModShapeM64N240K8
 	ModShapeM64N248K8
 	ModShapeM64N256K8
+
+	// M64 K16 shapes
+	ModShapeM64N8K16
+	ModShapeM64N16K16
+	ModShapeM64N24K16
+	ModShapeM64N32K16
+	ModShapeM64N40K16
+	ModShapeM64N48K16
+	ModShapeM64N56K16
+	ModShapeM64N64K16
+	ModShapeM64N72K16
+	ModShapeM64N80K16
+	ModShapeM64N88K16
+	ModShapeM64N96K16
+	ModShapeM64N104K16
+	ModShapeM64N112K16
+	ModShapeM64N120K16
+	ModShapeM64N128K16
+	ModShapeM64N136K16
+	ModShapeM64N144K16
+	ModShapeM64N152K16
+	ModShapeM64N160K16
+	ModShapeM64N168K16
+	ModShapeM64N176K16
+	ModShapeM64N184K16
+	ModShapeM64N192K16
+	ModShapeM64N200K16
+	ModShapeM64N208K16
+	ModShapeM64N216K16
+	ModShapeM64N224K16
+	ModShapeM64N232K16
+	ModShapeM64N240K16
+	ModShapeM64N248K16
+	ModShapeM64N256K16
 
 	// M64 K32 shapes
 	ModShapeM64N8K32
@@ -545,57 +550,65 @@ const (
 	ModBeforeThreadSync
 	ModAfterThreadSync
 
+	// Video/SIMD selectors & masks
+	ModB0
+	ModB1
+	ModB2
+	ModB3
+	ModH0
+	ModH1
+	ModH10
+	ModB00
+	ModB10
+	ModB3210
+	ModB7654
+
+	// Video scaling & modes
+	ModShr7
+	ModShr15
+	ModPo
+
+	// Mbarrier completion
+	ModMbarrierArriveOne
+
+	// SetMaxNReg actions
+	ModInc
+	ModDec
+
+	// Pmevent
+	ModMask
+
 	// Miscellaneous
-	ModTypeB32
 	ModRed
-
-	// Video/SIMD Selectors & Masks
-    ModB0  // .b0
-    ModB1                   // .b1
-    ModB2                   // .b2
-    ModB3                   // .b3
-    ModH0                   // .h0
-    ModH1                   // .h1
-    ModH10                  // .h10
-    ModB00                  // .b00
-    ModB10                  // .b10
-    ModB3210                // .b3210 (default)
-    ModB7654                // .b7654
-
-    // Video Scaling & Modes
-    ModShr7   // .shr7
-    ModShr15  // .shr15
-    ModPo     // .po (plus one)
-
-    // Tcgen05 Completion
-    ModMbarrierArriveOne // .mbarrier::arrive::one
-
-	ModTypeB64    // .b64
-    ModTypeU32    // .u32
-    ModTypeS64    // .s64 (often needed alongside u32)
-    ModTypeU64    // .u64
-
-
 )
 
 func (m Modifier) String() string {
 	switch m {
+	// Multiply width
 	case ModWide:
 		return ".wide"
 	case ModLo:
 		return ".lo"
 	case ModHi:
 		return ".hi"
+
+	// Saturation & flush
 	case ModSat:
 		return ".sat"
 	case ModFtz:
 		return ".ftz"
+
+	// Approximation
 	case ModApprox:
 		return ".approx"
 	case ModFull:
 		return ".full"
+
+	// Uniformity
 	case ModUni:
 		return ".uni"
+
+	// Memory consistency
 	case ModAcquire:
 		return ".acquire"
 	case ModRelease:
@@ -618,8 +631,12 @@ func (m Modifier) String() string {
 		return ".alias"
 	case ModAsync:
 		return ".async"
+
+	// Sync
 	case ModSync:
 		return ".sync"
+
+	// Testp
 	case ModFinite:
 		return ".finite"
 	case ModInfinite:
@@ -632,6 +649,8 @@ func (m Modifier) String() string {
 		return ".normal"
 	case ModSubnormal:
 		return ".subnormal"
+
+	// Shfl modes
 	case ModShflUp:
 		return ".up"
 	case ModShflDown:
@@ -640,6 +659,8 @@ func (m Modifier) String() string {
 		return ".bfly"
 	case ModShflIdx:
 		return ".idx"
+
+	// Atomic operations
 	case ModAtomAdd:
 		return ".add"
 	case ModAtomMin:
@@ -664,6 +685,8 @@ func (m Modifier) String() string {
 		return ".cas"
 	case ModExch:
 		return ".exch"
+
+	// Arithmetic modifiers
 	case ModRelu:
 		return ".relu"
 	case ModCC:
@@ -682,10 +705,14 @@ func (m Modifier) String() string {
 		return ".abs"
 	case ModOOB:
 		return ".oob"
+
+	// Shift direction
 	case ModLeft:
 		return ".l"
 	case ModRight:
 		return ".r"
+
+	// Prmt modes
 	case ModF4e:
 		return ".f4e"
 	case ModB4e:
@@ -698,6 +725,8 @@ func (m Modifier) String() string {
 		return ".ecr"
 	case ModRc16:
 		return ".rc16"
+
+	// L1 cache eviction
 	case ModL1EvictNormal:
 		return ".L1::evict_normal"
 	case ModL1EvictUnchanged:
@@ -708,6 +737,8 @@ func (m Modifier) String() string {
 		return ".L1::evict_last"
 	case ModL1NoAllocate:
 		return ".L1::no_allocate"
+
+	// L2 cache eviction & prefetch
 	case ModL2EvictNormal:
 		return ".L2::evict_normal"
 	case ModL2EvictFirst:
@@ -726,12 +757,16 @@ func (m Modifier) String() string {
 		return ".L2"
 	case ModNC:
 		return ".nc"
+
+	// Mbarrier & accumulation
 	case ModMbarrierCompleteTxBytes:
 		return ".mbarrier::complete_tx::bytes"
 	case ModAccF32:
 		return ".acc::f32"
 	case ModAccF16:
 		return ".acc::f16"
+
+	// Cvt / data movement
 	case ModTo:
 		return ".to"
 	case ModTensormap:
@@ -744,12 +779,16 @@ func (m Modifier) String() string {
 		return ".satfinite"
 	case ModScaledN2UE8M0:
 		return ".scaled::n2::ue8m0"
+
+	// Async copy
 	case ModMulticastCluster:
 		return ".multicast::cluster"
 	case ModBulkGroup:
 		return ".bulk_group"
 	case ModCpMask:
 		return ".cp_mask"
+
+	// State spaces
 	case ModSpaceGlobal:
 		return ".global"
 	case ModSpaceShared:
@@ -758,6 +797,8 @@ func (m Modifier) String() string {
 		return ".shared::cta"
 	case ModSpaceSharedCluster:
 		return ".shared::cluster"
+
+	// Tensor dimensions
 	case ModDim1D:
 		return ".1d"
 	case ModDim2D:
@@ -768,6 +809,8 @@ func (m Modifier) String() string {
 		return ".4d"
 	case ModDim5D:
 		return ".5d"
+
+	// Tensor load modes
 	case ModLoadTile:
 		return ".tile"
 	case ModLoadTileGather4:
@@ -782,10 +825,14 @@ func (m Modifier) String() string {
 		return ".im2col::w::128"
 	case ModLoadIm2ColNoOffs:
 		return ".im2col_no_offs"
+
+	// CTA groups
 	case ModCtaGroup1:
 		return ".cta_group::1"
 	case ModCtaGroup2:
 		return ".cta_group::2"
+
+	// Texture geometries
 	case ModNoFtz:
 		return ".noftz"
 	case ModGeom1D:
@@ -806,12 +853,16 @@ func (m Modifier) String() string {
 		return ".2dms"
 	case ModGeomA2DMS:
 		return ".a2dms"
+
+	// Texture mipmap modes
 	case ModBase:
 		return ".base"
 	case ModLevel:
 		return ".level"
 	case ModGrad:
 		return ".grad"
+
+	// Texture components
 	case ModCompR:
 		return ".r"
 	case ModCompG:
@@ -820,6 +871,8 @@ func (m Modifier) String() string {
 		return ".b"
 	case ModCompA:
 		return ".a"
+
+	// Tensormap fields
 	case ModFieldGlobalAddr:
 		return ".global_address"
 	case ModFieldRank:
@@ -844,6 +897,8 @@ func (m Modifier) String() string {
 		return ".fill_mode"
 	case ModRead:
 		return ".read"
+
+	// Texture & surface query attributes
 	case ModQueryWidth:
 		return ".width"
 	case ModQueryHeight:
@@ -874,36 +929,50 @@ func (m Modifier) String() string {
 		return ".num_samples"
 	case ModQueryMemoryLayout:
 		return ".memory_layout"
+
+	// Surface clamp modes
 	case ModClampTrap:
 		return ".trap"
 	case ModClampClamp:
 		return ".clamp"
 	case ModClampZero:
 		return ".zero"
+
+	// Type checks
 	case ModTypeTexRef:
 		return ".texref"
 	case ModTypeSamplerRef:
 		return ".samplerref"
 	case ModTypeSurfRef:
 		return ".surfref"
+
+	// Surface format
 	case ModB:
 		return ".b"
 	case ModP:
 		return ".p"
+
+	// Barrier ops
 	case ModArrive:
 		return ".arrive"
 	case ModWait:
 		return ".wait"
 	case ModAligned:
 		return ".aligned"
+
+	// Memory consistency restrictions
 	case ModOpRestrict:
 		return ".op_restrict"
 	case ModSyncRestrict:
 		return ".sync_restrict"
 	case ModMbarrierInitRestrict:
 		return ".mbarrier_init"
+
+	// Vector widths
 	case ModV8:
 		return ".v8"
+
+	// Barrier / completion
 	case ModParity:
 		return ".parity"
 	case ModNoComplete:
@@ -912,6 +981,8 @@ func (m Modifier) String() string {
 		return ".noinc"
 	case ModExpectTx:
 		return ".expect_tx"
+
+	// Tensormap & cluster
 	case ModTensormapGeneric:
 		return ".tensormap::generic"
 	case ModMulticastClusterAll:
@@ -920,24 +991,32 @@ func (m Modifier) String() string {
 		return ".is_canceled"
 	case ModGetFirstCTAId:
 		return ".get_first_ctaid"
+
+	// MMA block scaling (.kind)
 	case ModKindMxf8f6f4:
 		return ".kind::mxf8f6f4"
 	case ModKindMxf4:
 		return ".kind::mxf4"
 	case ModKindMxf4nvf4:
 		return ".kind::mxf4nvf4"
+
+	// MMA scale vector (.scale_vec)
 	case ModScaleVec1x:
 		return ".scale_vec::1X"
 	case ModScaleVec2x:
 		return ".scale_vec::2X"
 	case ModScaleVec4x:
 		return ".scale_vec::4X"
+
+	// Dimension query
 	case ModDimX:
 		return "::x"
 	case ModDimY:
 		return "::y"
 	case ModDimZ:
 		return "::z"
+
+	// Matrix roles
 	case ModMatrixA:
 		return ".a"
 	case ModMatrixB:
@@ -946,10 +1025,14 @@ func (m Modifier) String() string {
 		return ".c"
 	case ModMatrixD:
 		return ".d"
+
+	// Matrix layouts
 	case ModRow:
 		return ".row"
 	case ModCol:
 		return ".col"
+
+	// WMMA/MMA shapes
 	case ModShapeM16N16K16:
 		return ".m16n16k16"
 	case ModShapeM8N32K16:
@@ -986,8 +1069,12 @@ func (m Modifier) String() string {
 		return ".m8n16"
 	case ModShapeM16N8:
 		return ".m16n8"
+
+	// Matrix operations
 	case ModPopc:
 		return ".popc"
+
+	// Type modifiers
 	case ModTypeF16:
 		return ".f16"
 	case ModTypeF32:
@@ -1010,92 +1097,44 @@ func (m Modifier) String() string {
 		return ".u4"
 	case ModTypeB1:
 		return ".b1"
+	case ModTypeB32:
+		return ".b32"
+	case ModTypeB64:
+		return ".b64"
+	case ModTypeU32:
+		return ".u32"
+	case ModTypeS64:
+		return ".s64"
+	case ModTypeU64:
+		return ".u64"
+
+	// Matrix counts (.num)
 	case ModNumX1:
 		return ".x1"
 	case ModNumX2:
 		return ".x2"
 	case ModNumX4:
 		return ".x4"
+
+	// Matrix data formats
 	case ModDstFmtB8x16:
 		return ".b8x16"
 	case ModSrcFmtB6x16P32:
 		return ".b6x16_p32"
 	case ModSrcFmtB4x16P64:
 		return ".b4x16_p64"
+
+	// Transpose & block scale
 	case ModTrans:
 		return ".trans"
 	case ModBlockScale:
 		return ".block_scale"
+
+	// Sparse MMA
 	case ModSp:
 		return ".sp"
 	case ModSpOrderedMetadata:
 		return ".sp::ordered_metadata"
-
-	// M64 K16 shapes
-	case ModShapeM64N8K16:
-		return ".m64n8k16"
-	case ModShapeM64N16K16:
-		return ".m64n16k16"
-	case ModShapeM64N24K16:
-		return ".m64n24k16"
-	case ModShapeM64N32K16:
-		return ".m64n32k16"
-	case ModShapeM64N40K16:
-		return ".m64n40k16"
-	case ModShapeM64N48K16:
-		return ".m64n48k16"
-	case ModShapeM64N56K16:
-		return ".m64n56k16"
-	case ModShapeM64N64K16:
-		return ".m64n64k16"
-	case ModShapeM64N72K16:
-		return ".m64n72k16"
-	case ModShapeM64N80K16:
-		return ".m64n80k16"
-	case ModShapeM64N88K16:
-		return ".m64n88k16"
-	case ModShapeM64N96K16:
-		return ".m64n96k16"
-	case ModShapeM64N104K16:
-		return ".m64n104k16"
-	case ModShapeM64N112K16:
-		return ".m64n112k16"
-	case ModShapeM64N120K16:
-		return ".m64n120k16"
-	case ModShapeM64N128K16:
-		return ".m64n128k16"
-	case ModShapeM64N136K16:
-		return ".m64n136k16"
-	case ModShapeM64N144K16:
-		return ".m64n144k16"
-	case ModShapeM64N152K16:
-		return ".m64n152k16"
-	case ModShapeM64N160K16:
-		return ".m64n160k16"
-	case ModShapeM64N168K16:
-		return ".m64n168k16"
-	case ModShapeM64N176K16:
-		return ".m64n176k16"
-	case ModShapeM64N184K16:
-		return ".m64n184k16"
-	case ModShapeM64N192K16:
-		return ".m64n192k16"
-	case ModShapeM64N200K16:
-		return ".m64n200k16"
-	case ModShapeM64N208K16:
-		return ".m64n208k16"
-	case ModShapeM64N216K16:
-		return ".m64n216k16"
-	case ModShapeM64N224K16:
-		return ".m64n224k16"
-	case ModShapeM64N232K16:
-		return ".m64n232k16"
-	case ModShapeM64N240K16:
-		return ".m64n240k16"
-	case ModShapeM64N248K16:
-		return ".m64n248k16"
-	case ModShapeM64N256K16:
-		return ".m64n256k16"
 
 	// M64 K8 shapes
 	case ModShapeM64N8K8:
@@ -1162,6 +1201,72 @@ func (m Modifier) String() string {
 		return ".m64n248k8"
 	case ModShapeM64N256K8:
 		return ".m64n256k8"
+
+	// M64 K16 shapes
+	case ModShapeM64N8K16:
+		return ".m64n8k16"
+	case ModShapeM64N16K16:
+		return ".m64n16k16"
+	case ModShapeM64N24K16:
+		return ".m64n24k16"
+	case ModShapeM64N32K16:
+		return ".m64n32k16"
+	case ModShapeM64N40K16:
+		return ".m64n40k16"
+	case ModShapeM64N48K16:
+		return ".m64n48k16"
+	case ModShapeM64N56K16:
+		return ".m64n56k16"
+	case ModShapeM64N64K16:
+		return ".m64n64k16"
+	case ModShapeM64N72K16:
+		return ".m64n72k16"
+	case ModShapeM64N80K16:
+		return ".m64n80k16"
+	case ModShapeM64N88K16:
+		return ".m64n88k16"
+	case ModShapeM64N96K16:
+		return ".m64n96k16"
+	case ModShapeM64N104K16:
+		return ".m64n104k16"
+	case ModShapeM64N112K16:
+		return ".m64n112k16"
+	case ModShapeM64N120K16:
+		return ".m64n120k16"
+	case ModShapeM64N128K16:
+		return ".m64n128k16"
+	case ModShapeM64N136K16:
+		return ".m64n136k16"
+	case ModShapeM64N144K16:
+		return ".m64n144k16"
+	case ModShapeM64N152K16:
+		return ".m64n152k16"
+	case ModShapeM64N160K16:
+		return ".m64n160k16"
+	case ModShapeM64N168K16:
+		return ".m64n168k16"
+	case ModShapeM64N176K16:
+		return ".m64n176k16"
+	case ModShapeM64N184K16:
+		return ".m64n184k16"
+	case ModShapeM64N192K16:
+		return ".m64n192k16"
+	case ModShapeM64N200K16:
+		return ".m64n200k16"
+	case ModShapeM64N208K16:
+		return ".m64n208k16"
+	case ModShapeM64N216K16:
+		return ".m64n216k16"
+	case ModShapeM64N224K16:
+		return ".m64n224k16"
+	case ModShapeM64N232K16:
+		return ".m64n232k16"
+	case ModShapeM64N240K16:
+		return ".m64n240k16"
+	case ModShapeM64N248K16:
+		return ".m64n248k16"
+	case ModShapeM64N256K16:
+		return ".m64n256k16"
 
 	// M64 K32 shapes
 	case ModShapeM64N8K32:
@@ -1325,7 +1430,7 @@ func (m Modifier) String() string {
 	case ModShapeM64N256K256:
 		return ".m64n256k256"
 
-	// Tcgen05 data movement shapes
+	// Tcgen05 data movement shapes (ld/st)
 	case ModShape16x64b:
 		return ".16x64b"
 	case ModShape16x128b:
@@ -1336,6 +1441,8 @@ func (m Modifier) String() string {
 		return ".16x32bx2"
 	case ModShape32x32b:
 		return ".32x32b"
+
+	// Tcgen05 data movement shapes (cp)
 	case ModShape4x256b:
 		return ".4x256b"
 	case ModShape32x128b:
@@ -1346,6 +1453,8 @@ func (m Modifier) String() string {
 		return ".128x256b"
 	case ModShape128x128b:
 		return ".128x128b"
+
+	// Tcgen05 shift shape
 	case ModShape31x256b:
 		return ".31x256b"
 
@@ -1437,51 +1546,55 @@ func (m Modifier) String() string {
 	case ModAfterThreadSync:
 		return "::after_thread_sync"
 
-	// Miscellaneous
-	case ModTypeB32:
-		return ".b32"
-	case ModRed:
-		return ".red"
-
-	case ModB0: 
+	// Video/SIMD selectors & masks
+	case ModB0:
 		return ".b0"
-    case ModB1: 
+	case ModB1:
 		return ".b1"
-    case ModB2: 
+	case ModB2:
 		return ".b2"
-    case ModB3: 
+	case ModB3:
 		return ".b3"
-    case ModH0: 
+	case ModH0:
 		return ".h0"
-    case ModH1: 
+	case ModH1:
 		return ".h1"
-    case ModH10: 
+	case ModH10:
 		return ".h10"
-    case ModB00: 
+	case ModB00:
 		return ".b00"
-    case ModB10: 
+	case ModB10:
 		return ".b10"
-    case ModB3210: 
+	case ModB3210:
 		return ".b3210"
-    case ModB7654: 
+	case ModB7654:
 		return ".b7654"
-    case ModShr7: 
+
+	// Video scaling & modes
+	case ModShr7:
 		return ".shr7"
-    case ModShr15: 
+	case ModShr15:
 		return ".shr15"
-    case ModPo: 
+	case ModPo:
 		return ".po"
-    case ModMbarrierArriveOne: 
+
+	// Mbarrier completion
+	case ModMbarrierArriveOne:
 		return ".mbarrier::arrive::one"
 
-	case ModTypeB64:
-        return ".b64"
-    case ModTypeU32:
-        return ".u32"
-    case ModTypeS64:
-        return ".s64"
-    case ModTypeU64:
-        return ".u64"
+	// SetMaxNReg actions
+	case ModInc:
+		return ".inc"
+	case ModDec:
+		return ".dec"
+
+	// Pmevent
+	case ModMask:
+		return ".mask"
+
+	// Miscellaneous
+	case ModRed:
+		return ".red"
 
 	default:
 		return ""

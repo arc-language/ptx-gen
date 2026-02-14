@@ -10,17 +10,13 @@ import (
 
 // emitFunction emits a .entry or .func definition with params, registers, directives, and body.
 func (e *Emitter) emitFunction(f *builder.Function) {
-	// --- Signature line ---
 	e.emitFunctionSignature(f)
 
-	// --- Open body ---
 	e.line("{")
 	e.push()
 
-	// --- Register declarations ---
 	e.emitRegisterDecls(f)
 
-	// --- Performance tuning directives ---
 	for _, d := range f.Directives {
 		e.emitDirective(d)
 	}
@@ -29,7 +25,6 @@ func (e *Emitter) emitFunction(f *builder.Function) {
 		e.blank()
 	}
 
-	// --- Basic blocks ---
 	for i, bb := range f.Blocks {
 		if i > 0 {
 			e.blank()
@@ -37,7 +32,6 @@ func (e *Emitter) emitFunction(f *builder.Function) {
 		e.emitBlock(bb)
 	}
 
-	// --- Close body ---
 	e.pop()
 	e.line("}")
 }
@@ -56,20 +50,19 @@ func (e *Emitter) emitFunction(f *builder.Function) {
 func (e *Emitter) emitFunctionSignature(f *builder.Function) {
 	var prefix []string
 
-	// 1. Linkage
+	// Linkage
 	if f.Linkage != ptx.LinkNone {
 		prefix = append(prefix, f.Linkage.String())
 	}
 
-	// 2. .entry or .func
+	// .entry or .func
 	if f.IsKernel {
 		prefix = append(prefix, ".entry")
 	} else {
 		prefix = append(prefix, ".func")
 	}
 
-	// 3. Attributes (Section 5.4.8)
-	// Format: .func .attribute(...) name
+	// Attributes (Section 5.4.8): .func .attribute(...) name
 	if len(f.Attributes) > 0 {
 		var attrs []string
 		for _, attr := range f.Attributes {
@@ -86,10 +79,9 @@ func (e *Emitter) emitFunctionSignature(f *builder.Function) {
 		prefix = append(prefix, fmt.Sprintf(".attribute(%s)", strings.Join(attrs, ", ")))
 	}
 
-	// For .func with return params, emit return param list before name
-	// Syntax: .func (.reg .u32 r) name ...
 	head := strings.Join(prefix, " ")
 
+	// .func with return params: .func (.reg .u32 r) name ...
 	if !f.IsKernel && len(f.ReturnParams) > 0 {
 		retParts := make([]string, len(f.ReturnParams))
 		for i, rp := range f.ReturnParams {
@@ -97,12 +89,10 @@ func (e *Emitter) emitFunctionSignature(f *builder.Function) {
 		}
 		e.writef("%s (%s) %s", head, strings.Join(retParts, ", "), f.Name)
 	} else {
-		// Just name
+		e.writeIndent()
 		if len(prefix) > 0 {
-			e.writeIndent() // Ensure indentation if we started a new line logic, though usually top level
 			e.writef("%s %s", head, f.Name)
 		} else {
-			e.writeIndent()
 			e.writef("%s", f.Name)
 		}
 	}
@@ -139,32 +129,26 @@ func emitParamDecl(p *builder.Param, isKernel bool) string {
 	if isKernel {
 		parts = append(parts, ".param")
 
-		// Alignment (for byte array params)
 		if p.Align > 0 {
 			parts = append(parts, fmt.Sprintf(".align %d", p.Align))
 		}
 
-		// Type
 		parts = append(parts, p.Typ.String())
 
-		// Pointer attribute
 		if p.IsPointer {
 			parts = append(parts, ".ptr")
 			parts = append(parts, p.PtrSpace.String())
-			// Default alignment for pointers
 			if p.Align > 0 {
 				parts = append(parts, fmt.Sprintf(".align %d", p.Align))
 			}
 		}
 
-		// Name + optional byte array size
 		if p.Size > 0 {
 			parts = append(parts, fmt.Sprintf("%s[%d]", p.Name, p.Size))
 		} else {
 			parts = append(parts, p.Name)
 		}
 	} else {
-		// Device function params: can be .reg or .param
 		if p.Size > 0 {
 			// Pass-by-value struct: .param .align A .b8 name[size]
 			parts = append(parts, ".param")
@@ -192,7 +176,6 @@ func emitParamDecl(p *builder.Param, isKernel bool) string {
 //	.reg .f32  %a_val, %b_val, %result;
 //	.reg .pred %p;
 func (e *Emitter) emitRegisterDecls(f *builder.Function) {
-	// Group registers by type
 	groups := make(map[ptx.Type][]*builder.Register)
 	var order []ptx.Type
 
@@ -230,25 +213,37 @@ func (e *Emitter) emitDirective(d *builder.Directive) {
 		e.linef(".pragma \"%s\";", d.Text)
 	case builder.DirReqNCluster:
 		e.linef(".reqnctapercluster %s", joinInts(d.Values))
+	case builder.DirNoReturn:
+		e.line(".noreturn")
+	case builder.DirAbiPreserve:
+		e.linef(".abi_preserve %d", d.Values[0])
+	case builder.DirAbiPreserveCtrl:
+		e.linef(".abi_preserve_control %d", d.Values[0])
+	case builder.DirExplicitCluster:
+		e.line(".explicitcluster")
+	case builder.DirMaxClusterRank:
+		e.linef(".maxclusterrank %d", d.Values[0])
+	case builder.DirBlocksAreClusters:
+		e.line(".blocksareclusters")
+	case builder.DirAlias:
+		e.linef(".alias %s", d.Text)
 	}
 }
 
 // emitBlock emits a labeled basic block.
 func (e *Emitter) emitBlock(bb *builder.BasicBlock) {
-	// Label (outdented one level from instructions)
 	if bb.Label != "" {
 		e.pop()
 		e.linef("%s:", bb.Label)
 		e.push()
 	}
 
-	// Instructions
 	for _, inst := range bb.Instructions {
 		e.emitInstruction(inst)
 	}
 }
 
-// joinInts formats a slice of ints as comma-separated string.
+// joinInts formats a slice of ints as a comma-separated string.
 func joinInts(vals []int) string {
 	parts := make([]string, len(vals))
 	for i, v := range vals {

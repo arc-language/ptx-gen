@@ -205,6 +205,8 @@ const (
 	OpCreatePolicy
 	OpApplyPriority
 	OpIstypep
+	OpPmevent
+	OpSetMaxNReg
 
 	// Cluster launch control
 	OpTensormapCpFenceproxy
@@ -234,6 +236,7 @@ const (
 
 func (o Opcode) String() string {
 	switch o {
+	// Integer arithmetic
 	case OpAdd:
 		return "add"
 	case OpSub:
@@ -282,6 +285,8 @@ func (o Opcode) String() string {
 		return "dp2a"
 	case OpFns:
 		return "fns"
+
+	// Extended-precision integer
 	case OpAddCC:
 		return "add.cc"
 	case OpAddc:
@@ -294,6 +299,8 @@ func (o Opcode) String() string {
 		return "mad.cc"
 	case OpMadc:
 		return "madc"
+
+	// Floating point
 	case OpFma:
 		return "fma"
 	case OpRcp:
@@ -316,6 +323,8 @@ func (o Opcode) String() string {
 		return "testp"
 	case OpCopysign:
 		return "copysign"
+
+	// Comparison & selection
 	case OpSet:
 		return "set"
 	case OpSetp:
@@ -324,6 +333,8 @@ func (o Opcode) String() string {
 		return "selp"
 	case OpSlct:
 		return "slct"
+
+	// Logic & shift
 	case OpAnd:
 		return "and"
 	case OpOr:
@@ -342,6 +353,8 @@ func (o Opcode) String() string {
 		return "shl"
 	case OpShr:
 		return "shr"
+
+	// Data movement & conversion
 	case OpMov:
 		return "mov"
 	case OpShfl:
@@ -372,6 +385,8 @@ func (o Opcode) String() string {
 		return "prefetchu"
 	case OpIsSpacep:
 		return "isspacep"
+
+	// Texture & surface
 	case OpTex:
 		return "tex"
 	case OpTld4:
@@ -386,6 +401,8 @@ func (o Opcode) String() string {
 		return "sured"
 	case OpSuq:
 		return "suq"
+
+	// Control flow
 	case OpBra:
 		return "bra"
 	case OpBrxIdx:
@@ -396,6 +413,8 @@ func (o Opcode) String() string {
 		return "ret"
 	case OpExit:
 		return "exit"
+
+	// Parallel synchronization
 	case OpBar:
 		return "bar.sync"
 	case OpBarWarp:
@@ -428,6 +447,8 @@ func (o Opcode) String() string {
 		return "elect.sync"
 	case OpGriddepcontrol:
 		return "griddepcontrol"
+
+	// Async copy
 	case OpCpAsync:
 		return "cp.async"
 	case OpCpAsyncCommitGroup:
@@ -454,6 +475,8 @@ func (o Opcode) String() string {
 		return "cp.reduce.async.bulk"
 	case OpCpReduceAsyncBulkTensor:
 		return "cp.reduce.async.bulk.tensor"
+
+	// Multimem
 	case OpMultimem:
 		return "multimem"
 	case OpMultimemLdReduce:
@@ -466,6 +489,8 @@ func (o Opcode) String() string {
 		return "multimem.cp.async.bulk"
 	case OpMultimemCpReduceAsyncBulk:
 		return "multimem.cp.reduce.async.bulk"
+
+	// Warp matrix (tensor core)
 	case OpWmmaLoad:
 		return "wmma.load"
 	case OpWmmaStore:
@@ -482,6 +507,8 @@ func (o Opcode) String() string {
 		return "stmatrix"
 	case OpMovMatrix:
 		return "movmatrix"
+
+	// Tensor map
 	case OpTensorMap:
 		return "tensormap"
 	case OpTensormapReplace:
@@ -490,6 +517,8 @@ func (o Opcode) String() string {
 		return "mapa"
 	case OpGetCTARank:
 		return "getctarank"
+
+	// Mbarrier
 	case OpMbarrierInit:
 		return "mbarrier.init"
 	case OpMbarrierInval:
@@ -508,6 +537,8 @@ func (o Opcode) String() string {
 		return "mbarrier.complete_tx"
 	case OpMbarrierPendingCount:
 		return "mbarrier.pending_count"
+
+	// Vector / SIMD
 	case OpVadd:
 		return "vadd"
 	case OpVadd2:
@@ -554,6 +585,8 @@ func (o Opcode) String() string {
 		return "vshr"
 	case OpVmad:
 		return "vmad"
+
+	// Misc
 	case OpTrap:
 		return "trap"
 	case OpBrkpt:
@@ -574,12 +607,20 @@ func (o Opcode) String() string {
 		return "applypriority"
 	case OpIstypep:
 		return "istypep"
+	case OpPmevent:
+		return "pmevent"
+	case OpSetMaxNReg:
+		return "setmaxnreg"
+
+	// Cluster launch control
 	case OpTensormapCpFenceproxy:
 		return "tensormap.cp_fenceproxy"
 	case OpClusterlaunchcontrolTryCancel:
 		return "clusterlaunchcontrol.try_cancel"
 	case OpClusterlaunchcontrolQueryCancel:
 		return "clusterlaunchcontrol.query_cancel"
+
+	// WGMMA
 	case OpWgmmaFence:
 		return "wgmma.fence"
 	case OpWgmmaCommitGroup:
@@ -590,6 +631,8 @@ func (o Opcode) String() string {
 		return "wgmma.mma_async"
 	case OpFenceProxyAsync:
 		return "fence.proxy.async"
+
+	// Tensor Core Gen 5 (sm_100+)
 	case OpTcgen05Alloc:
 		return "tcgen05.alloc"
 	case OpTcgen05Dealloc:
@@ -612,6 +655,7 @@ func (o Opcode) String() string {
 		return "tcgen05.wait"
 	case OpTcgen05Fence:
 		return "tcgen05.fence"
+
 	default:
 		return "unknown"
 	}
