@@ -570,6 +570,11 @@ const (
     // Tcgen05 Completion
     ModMbarrierArriveOne // .mbarrier::arrive::one
 
+	ModTypeB64    // .b64
+    ModTypeU32    // .u32
+    ModTypeS64    // .s64 (often needed alongside u32)
+    ModTypeU64    // .u64
+
 
 )
 
@@ -1468,6 +1473,15 @@ func (m Modifier) String() string {
 		return ".po"
     case ModMbarrierArriveOne: 
 		return ".mbarrier::arrive::one"
+
+	case ModTypeB64:
+        return ".b64"
+    case ModTypeU32:
+        return ".u32"
+    case ModTypeS64:
+        return ".s64"
+    case ModTypeU64:
+        return ".u64"
 
 	default:
 		return ""
