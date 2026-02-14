@@ -986,7 +986,7 @@ func Mma(shape, alayout, blayout ptx.Modifier, d, a, b, c Operand) *Instruction 
 // num: .x1, .x2, .x4
 func Ldmatrix(shape, num ptx.Modifier, typ ptx.Type, dst, addr Operand) *Instruction {
 	return &Instruction{
-		Op:  ptx.OpLdmatrix,
+		Op:  ptx.OpLdMatrix,
 		Typ: typ,
 		Dst: dst,
 		Src: []Operand{addr},
@@ -1002,7 +1002,7 @@ func Ldmatrix(shape, num ptx.Modifier, typ ptx.Type, dst, addr Operand) *Instruc
 // LdmatrixTrans loads matrices with transpose (.trans).
 func LdmatrixTrans(shape, num ptx.Modifier, typ ptx.Type, dst, addr Operand) *Instruction {
 	return &Instruction{
-		Op:  ptx.OpLdmatrix,
+		Op:  ptx.OpLdMatrix,
 		Typ: typ,
 		Dst: dst,
 		Src: []Operand{addr},
@@ -1019,7 +1019,7 @@ func LdmatrixTrans(shape, num ptx.Modifier, typ ptx.Type, dst, addr Operand) *In
 // Stmatrix stores matrices to shared memory.
 func Stmatrix(shape, num ptx.Modifier, typ ptx.Type, addr, src Operand) *Instruction {
 	return &Instruction{
-		Op:  ptx.OpStmatrix,
+		Op:  ptx.OpStMatrix,
 		Typ: typ,
 		Src: []Operand{addr, src},
 		Modifiers: []ptx.Modifier{
@@ -1034,7 +1034,7 @@ func Stmatrix(shape, num ptx.Modifier, typ ptx.Type, addr, src Operand) *Instruc
 // Movmatrix transposes a matrix in registers.
 func Movmatrix(shape ptx.Modifier, typ ptx.Type, dst, src Operand) *Instruction {
 	return &Instruction{
-		Op:  ptx.OpMovmatrix,
+		Op:  ptx.OpMovMatrix,
 		Typ: typ,
 		Dst: dst,
 		Src: []Operand{src},
