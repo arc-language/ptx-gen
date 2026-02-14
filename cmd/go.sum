@@ -14,3 +14,5 @@ github.com/arc-language/ptx-gen v0.0.0-20260214084215-06ba73f6e4d6 h1:oS297BY7Vu
 github.com/arc-language/ptx-gen v0.0.0-20260214084215-06ba73f6e4d6/go.mod h1:Ebs6XFmV+QQXeigXW+jM1j8xlIVQXcoNElhoKYXQ1ZA=
 github.com/arc-language/ptx-gen v0.0.0-20260214143154-28f419d67ce7 h1:oevL/IiVMn1c/UnluS5TDWbrMI6EogCiqwG+xL2XD9U=
 github.com/arc-language/ptx-gen v0.0.0-20260214143154-28f419d67ce7/go.mod h1:Ebs6XFmV+QQXeigXW+jM1j8xlIVQXcoNElhoKYXQ1ZA=
+github.com/arc-language/ptx-gen v0.0.0-20260214145342-bc00f334e292 h1:bMsdIyvPRzQfIK0vdZlCpQvwWAg8YFZyE9Ms6myQIK0=
+github.com/arc-language/ptx-gen v0.0.0-20260214145342-bc00f334e292/go.mod h1:Ebs6XFmV+QQXeigXW+jM1j8xlIVQXcoNElhoKYXQ1ZA=

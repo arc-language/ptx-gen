@@ -563,6 +563,12 @@ const (
     ModBeforeThreadSync // ::before_thread_sync
     ModAfterThreadSync  // ::after_thread_sync
 
+	// Missing Type Modifiers
+    ModTypeB32 // .b32
+
+    // Missing Operation Modifiers
+    ModRed // .red (for tcgen05.ld.red)
+
 
 
 )
@@ -1126,6 +1132,8 @@ func (m Modifier) String() string {
     case ModBeforeThreadSync: return "::before_thread_sync"
     case ModAfterThreadSync: return "::after_thread_sync"
 
+	case ModTypeB32: return ".b32"
+    case ModRed: return ".red"
 
 	default:
 		return ""

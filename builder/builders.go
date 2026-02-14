@@ -1314,20 +1314,17 @@ func Tcgen05Ld(shape, num ptx.Modifier, dst, tAddr Operand, splitOff ...Operand)
 }
 
 // Tcgen05LdRed performs load with reduction.
-// Syntax: tcgen05.ld.red.sync.aligned.shape.num.redOp{.abs}{.NaN}.type r, redval, [taddr], {immHalfSplitoff};
 func Tcgen05LdRed(shape, num, redOp, typ ptx.Modifier, dst, redVal, tAddr Operand, splitOff ...Operand) *Instruction {
     srcs := []Operand{tAddr}
     if len(splitOff) > 0 {
         srcs = append(srcs, splitOff...)
     }
-    // Note: Dst needs to handle both 'r' (vector) and 'redval' (scalar). 
-    // In our IR, we might need to handle multi-destination or structure the Dst operand to include both.
-    // For now, assuming the caller passes a combined operand or handles it via custom assembly emission.
     return &Instruction{
         Op:        ptx.OpTcgen05Ld,
-        Dst:       dst, // Should encompass r and redval
+        Dst:       dst, 
         Src:       srcs,
-        Modifiers: []ptx.Modifier{ptx.OpRed, ptx.ModSync, ptx.ModAligned, shape, num, redOp, typ},
+        // CHANGED: Use ptx.ModRed instead of ptx.OpRed
+        Modifiers: []ptx.Modifier{ptx.ModRed, ptx.ModSync, ptx.ModAligned, shape, num, redOp, typ},
     }
 }
 
