@@ -31,11 +31,11 @@ const (
 	OpFns
 
 	// ---- Extended-precision integer ----
-	OpAddCC // add.cc
+	OpAddCC
 	OpAddc
-	OpSubCC // sub.cc
+	OpSubCC
 	OpSubc
-	OpMadCC // mad.cc
+	OpMadCC
 	OpMadc
 
 	// ---- Floating point ----
@@ -70,16 +70,20 @@ const (
 
 	// ---- Data movement & conversion ----
 	OpMov
-	OpShfl // shfl.sync
+	OpShfl
 	OpPrmt
 	OpLd
-	OpLdNC // ld.global.nc (non-coherent, read-only cache)
+	OpLdNC
+	OpLdu
 	OpSt
 	OpStAsync
+	OpStBulk
 	OpCvt
 	OpCvtPack
-	OpCvta // convert address between generic and specific state space
+	OpCvta
 	OpPrefetch
+	OpPrefetchu
+	OpIsSpacep
 
 	// ---- Texture & surface ----
 	OpTex
@@ -92,20 +96,22 @@ const (
 
 	// ---- Control flow ----
 	OpBra
-	OpBrxIdx // brx.idx or brx
+	OpBrxIdx
 	OpCall
 	OpRet
 	OpExit
 
 	// ---- Parallel synchronization ----
-	OpBar            // bar.sync
-	OpBarWarp        // bar.warp.sync
-	OpBarrierCluster // barrier.cluster
-	OpMembar         // membar / fence
+	OpBar
+	OpBarWarp
+	OpBarWarpSync
+	OpBarrierCluster
+	OpMembar
 	OpFence
 	OpAtom
-	OpRed // reduction
+	OpRed
 	OpRedAsync
+	OpVote
 	OpVoteSync
 	OpMatchSync
 	OpActivemask
@@ -117,15 +123,41 @@ const (
 	OpCpAsync
 	OpCpAsyncCommitGroup
 	OpCpAsyncWaitGroup
+	OpCpAsyncWaitAll
 	OpCpAsyncBulk
-	OpCpReduceAsyncBulk
+	OpCpAsyncBulkCommitGroup
+	OpCpAsyncBulkWaitGroup
+	OpCpAsyncBulkPrefetch
+	OpCpAsyncBulkTensor
+	OpCpAsyncBulkPrefetchTensor
 	OpCpAsyncMbarrierArrive
+	OpCpReduceAsyncBulk
+	OpCpReduceAsyncBulkTensor
+
+	// ---- Multimem ----
+	OpMultimem
+	OpMultimemLdReduce
+	OpMultimemSt
+	OpMultimemRed
+	OpMultimemCpAsyncBulk
+	OpMultimemCpReduceAsyncBulk
 
 	// ---- Warp matrix (tensor core) ----
 	OpWmmaLoad
 	OpWmmaStore
 	OpWmmaMma
 	OpMma
+	OpWgmma
+	OpLdMatrix
+	OpStMatrix
+	OpMovMatrix
+
+	// ---- Tensor map ----
+	OpTensorMap
+	OpTensormapReplace
+	OpMapA
+	OpMapa
+	OpGetCTARank
 
 	// ---- Mbarrier ----
 	OpMbarrierInit
@@ -138,9 +170,7 @@ const (
 	OpMbarrierCompleteTx
 	OpMbarrierPendingCount
 
-	// ---- New in PTX 9.1 / Recent ----
-
-	// Vector Arithmetic / SIMD
+	// ---- Vector / SIMD ----
 	OpVadd
 	OpVadd2
 	OpVadd4
@@ -165,69 +195,17 @@ const (
 	OpVshr
 	OpVmad
 
-	// Matrix / Tensor / Cluster
-	OpLdMatrix   // ldmatrix
-	OpStMatrix   // stmatrix
-	OpMovMatrix  // movmatrix
-	OpWgmma      // wgmma
-	OpMultimem   // multimem
-	OpTensorMap  // tensormap
-	OpMapA       // mapa
-	OpGetCTARank // getctarank
-
-	// Misc / Control / Debug
-	OpTrap          // trap
-	OpBrkpt         // brkpt
-	OpDiscard       // discard
-	OpNanoSleep     // nanosleep
-	OpAlloca        // alloca
-	OpStackRestore  // stackrestore
-	OpStackSave     // stacksave
-	OpCreatePolicy  // createpolicy
-	OpApplyPriority // applypriority
-
-
-	OpLdu Opcode = iota // ldu
-    OpStBulk            // st.bulk
-    OpMultimemLdReduce  // multimem.ld_reduce
-    OpMultimemSt        // multimem.st
-    OpMultimemRed       // multimem.red
-
-
-	// ---- Data Movement (Advanced) ----
-	OpPrefetchu                   // prefetchu
-	OpIsSpacep                    // isspacep
-
-
-	// ---- Data Movement (Async & packed) ----
-    OpMapa                           // mapa
-    OpCpAsyncWaitAll                 // cp.async.wait_all
-
-
-    // ---- New additions for PTX 8.0 / 9.1 Bulk Async & Tensor ----
-
-    OpCpAsyncBulkPrefetch       // cp.async.bulk.prefetch
-    OpMultimemCpAsyncBulk       // multimem.cp.async.bulk
-    OpMultimemCpReduceAsyncBulk // multimem.cp.reduce.async.bulk
-
-	OpCpAsyncBulkTensor Opcode = iota + 453 // Aligning
-
-	// ---- Tensor Reduction & Prefetch (Section 9.7.9.27.1.3 - 4) ----
-	OpCpReduceAsyncBulkTensor   // cp.reduce.async.bulk.tensor
-	OpCpAsyncBulkPrefetchTensor // cp.async.bulk.prefetch.tensor
-
-	// ---- Bulk Group Management (Section 9.7.9.27.2) ----
-	OpCpAsyncBulkCommitGroup // cp.async.bulk.commit_group
-	OpCpAsyncBulkWaitGroup   // cp.async.bulk.wait_group
-
-	// ---- Tensormap (Section 9.7.9.28) ----
-	OpTensormapReplace // tensormap.replace
-
-	OpIstypep                   // istypep
-
-	// ---- Parallel Synchronization (Section 9.7.13) ----
-	OpBarWarpSync      // bar.warp.sync
-	OpVote             // vote (non-sync version)
+	// ---- Misc ----
+	OpTrap
+	OpBrkpt
+	OpDiscard
+	OpNanoSleep
+	OpAlloca
+	OpStackRestore
+	OpStackSave
+	OpCreatePolicy
+	OpApplyPriority
+	OpIstypep
 )
 
 func (o Opcode) String() string {
@@ -350,10 +328,14 @@ func (o Opcode) String() string {
 		return "ld"
 	case OpLdNC:
 		return "ld.global.nc"
+	case OpLdu:
+		return "ldu"
 	case OpSt:
 		return "st"
 	case OpStAsync:
 		return "st.async"
+	case OpStBulk:
+		return "st.bulk"
 	case OpCvt:
 		return "cvt"
 	case OpCvtPack:
@@ -362,6 +344,10 @@ func (o Opcode) String() string {
 		return "cvta"
 	case OpPrefetch:
 		return "prefetch"
+	case OpPrefetchu:
+		return "prefetchu"
+	case OpIsSpacep:
+		return "isspacep"
 	case OpTex:
 		return "tex"
 	case OpTld4:
@@ -390,6 +376,8 @@ func (o Opcode) String() string {
 		return "bar.sync"
 	case OpBarWarp:
 		return "bar.warp.sync"
+	case OpBarWarpSync:
+		return "bar.warp.sync"
 	case OpBarrierCluster:
 		return "barrier.cluster"
 	case OpMembar:
@@ -402,6 +390,8 @@ func (o Opcode) String() string {
 		return "red"
 	case OpRedAsync:
 		return "red.async"
+	case OpVote:
+		return "vote"
 	case OpVoteSync:
 		return "vote.sync"
 	case OpMatchSync:
@@ -420,12 +410,38 @@ func (o Opcode) String() string {
 		return "cp.async.commit_group"
 	case OpCpAsyncWaitGroup:
 		return "cp.async.wait_group"
+	case OpCpAsyncWaitAll:
+		return "cp.async.wait_all"
 	case OpCpAsyncBulk:
 		return "cp.async.bulk"
+	case OpCpAsyncBulkCommitGroup:
+		return "cp.async.bulk.commit_group"
+	case OpCpAsyncBulkWaitGroup:
+		return "cp.async.bulk.wait_group"
+	case OpCpAsyncBulkPrefetch:
+		return "cp.async.bulk.prefetch"
+	case OpCpAsyncBulkTensor:
+		return "cp.async.bulk.tensor"
+	case OpCpAsyncBulkPrefetchTensor:
+		return "cp.async.bulk.prefetch.tensor"
+	case OpCpAsyncMbarrierArrive:
+		return "cp.async.mbarrier.arrive"
 	case OpCpReduceAsyncBulk:
 		return "cp.reduce.async.bulk"
-	case OpCpAsyncMbarrierArrive:
-        return "cp.async.mbarrier.arrive"
+	case OpCpReduceAsyncBulkTensor:
+		return "cp.reduce.async.bulk.tensor"
+	case OpMultimem:
+		return "multimem"
+	case OpMultimemLdReduce:
+		return "multimem.ld_reduce"
+	case OpMultimemSt:
+		return "multimem.st"
+	case OpMultimemRed:
+		return "multimem.red"
+	case OpMultimemCpAsyncBulk:
+		return "multimem.cp.async.bulk"
+	case OpMultimemCpReduceAsyncBulk:
+		return "multimem.cp.reduce.async.bulk"
 	case OpWmmaLoad:
 		return "wmma.load"
 	case OpWmmaStore:
@@ -434,6 +450,24 @@ func (o Opcode) String() string {
 		return "wmma.mma"
 	case OpMma:
 		return "mma"
+	case OpWgmma:
+		return "wgmma"
+	case OpLdMatrix:
+		return "ldmatrix"
+	case OpStMatrix:
+		return "stmatrix"
+	case OpMovMatrix:
+		return "movmatrix"
+	case OpTensorMap:
+		return "tensormap"
+	case OpTensormapReplace:
+		return "tensormap.replace"
+	case OpMapA:
+		return "mapa"
+	case OpMapa:
+		return "mapa"
+	case OpGetCTARank:
+		return "getctarank"
 	case OpMbarrierInit:
 		return "mbarrier.init"
 	case OpMbarrierInval:
@@ -498,22 +532,6 @@ func (o Opcode) String() string {
 		return "vshr"
 	case OpVmad:
 		return "vmad"
-	case OpLdMatrix:
-		return "ldmatrix"
-	case OpStMatrix:
-		return "stmatrix"
-	case OpMovMatrix:
-		return "movmatrix"
-	case OpWgmma:
-		return "wgmma"
-	case OpMultimem:
-		return "multimem"
-	case OpTensorMap:
-		return "tensormap"
-	case OpMapA:
-		return "mapa"
-	case OpGetCTARank:
-		return "getctarank"
 	case OpTrap:
 		return "trap"
 	case OpBrkpt:
@@ -532,50 +550,8 @@ func (o Opcode) String() string {
 		return "createpolicy"
 	case OpApplyPriority:
 		return "applypriority"
-	case OpLdu:
-        return "ldu"
-    case OpStBulk:
-        return "st.bulk"
-    case OpMultimemLdReduce:
-        return "multimem.ld_reduce"
-    case OpMultimemSt:
-        return "multimem.st"
-    case OpMultimemRed:
-        return "multimem.red"
-	case OpPrefetchu:
-		return "prefetchu"
-	case OpIsSpacep:
-		return "isspacep"
-    case OpMapa:
-        return "mapa"
-    case OpCpAsyncWaitAll:
-        return "cp.async.wait_all"
-
-
-    case OpCpAsyncBulkPrefetch:
-        return "cp.async.bulk.prefetch"
-    case OpMultimemCpAsyncBulk:
-        return "multimem.cp.async.bulk"
-    case OpMultimemCpReduceAsyncBulk:
-        return "multimem.cp.reduce.async.bulk"
-    case OpCpAsyncBulkTensor:
-        return "cp.async.bulk.tensor"
-	case OpCpReduceAsyncBulkTensor:
-		return "cp.reduce.async.bulk.tensor"
-	case OpCpAsyncBulkPrefetchTensor:
-		return "cp.async.bulk.prefetch.tensor"
-	case OpCpAsyncBulkCommitGroup:
-		return "cp.async.bulk.commit_group"
-	case OpCpAsyncBulkWaitGroup:
-		return "cp.async.bulk.wait_group"
-	case OpTensormapReplace:
-		return "tensormap.replace"
-
-	case OpBarWarpSync:
-		return "bar.warp.sync"
-	case OpVote:
-		return "vote"
-
+	case OpIstypep:
+		return "istypep"
 	default:
 		return "unknown"
 	}
