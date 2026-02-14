@@ -696,9 +696,7 @@ mod.AddGlobal(
 
 ---
 
-## Roadmap
-
-### Complete (Sections 1–10)
+### Complete
 - PTX module structure, versioning, and target architectures
 - All fundamental data types and state spaces
 - Full arithmetic, logic, shift, and bit-manipulation instructions
@@ -724,11 +722,6 @@ mod.AddGlobal(
 - Performance-tuning directives (`.maxnreg`, `.maxntid`, `.reqntid`, `.pragma`, `.explicitcluster`, etc.)
 - Stack management (`alloca`, `stacksave`, `stackrestore`)
 - All miscellaneous instructions (`nanosleep`, `brkpt`, `trap`, `discard`, `pmevent`, `setmaxnreg`, etc.)
-
-### Upcoming (Sections 11–14)
-- Parallel Synchronization and Communication (advanced warp group operations)
-- Additional performance instrumentation primitives
-- Profiling and debug support
 
 ## License
 
