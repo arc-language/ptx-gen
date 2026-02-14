@@ -51,70 +51,88 @@ func (e *Emitter) emitInstruction(inst *builder.Instruction) {
 }
 
 // buildMnemonic constructs the full instruction mnemonic string.
-//
-// Examples:
-//   add.u32
-//   ld.global.f32
-//   setp.ge.u32
-//   cvt.rn.f32.u32
-//   mul.wide.u32
-//   atom.global.add.u32
-//   st.global.f32
-//   bar.sync
-//   shfl.sync.up.b32
+// Order: Opcode .Cmp .BoolOp .Modifiers .Space .Cache .Scope .Rounding .Vec .Type .SrcType
+// Example: setp.lt.and.f32, ld.global.ca.v4.f32, cvt.rn.f16.f32, cp.async.ca.shared.global
 func buildMnemonic(inst *builder.Instruction) string {
-    var parts []string
+	var sb strings.Builder
 
-    // Base opcode
-    parts = append(parts, inst.Op.String())
+	// 1. Opcode
+	sb.WriteString(inst.Op.String())
 
-    // Modifiers that come right after opcode (.wide, .lo, .hi, etc.)
-    for _, m := range inst.Modifiers {
-        parts = append(parts, m.String())
-    }
+	// 2. Comparison & Boolean Operators (set, setp)
+	if inst.Op == ptx.OpSet || inst.Op == ptx.OpSetp {
+		// Only append Cmp if specific logic requires it, usually strictly required for set/setp
+		sb.WriteString(inst.Cmp.String())
 
-    // State space (.global, .shared, .param, .local, .const)
-    if inst.Space != ptx.Reg && inst.Space != 0 {
-        // ptx.Reg is 0/default, skip it
-        parts = append(parts, inst.Space.String())
-    }
+		// Append Boolean Operator (.and, .or, .xor) if present
+		if inst.BoolOp != ptx.BoolNone {
+			sb.WriteString(inst.BoolOp.String())
+		}
+	}
 
-    // Cache operator (.ca, .cg, .cs, .cv)
-    if inst.Cache != ptx.CacheNone {
-        parts = append(parts, inst.Cache.String())
-    }
+	// 3. Modifiers
+	// Handles .wide, .lo, .hi, .sat, .ftz, .approx, .sync, .multicast, etc.
+	// Also handles explicit state space modifiers for cp.async (e.g. .shared::cluster)
+	for _, mod := range inst.Modifiers {
+		sb.WriteString(mod.String())
+	}
 
-    // Memory scope (.cta, .gpu, .sys)
-    if inst.Scope != ptx.ScopeNone {
-        parts = append(parts, inst.Scope.String())
-    }
+	// 4. State Space
+	// Standard ld/st/atom instructions use the Space field (.global, .shared, .const, etc.)
+	// Note: We avoid printing .reg as it is the default implicit state.
+	if inst.Space != ptx.Reg && inst.Space != ptx.StateSpace(0) {
+		sb.WriteString(inst.Space.String())
+	}
 
-    // Comparison operator (.eq, .lt, .ge, etc.)
-    if inst.Op == ptx.OpSetp || inst.Op == ptx.OpSet || inst.Op == ptx.OpSlct {
-        parts = append(parts, inst.Cmp.String())
-    }
+	// 5. Cache Operators
+	// (.ca, .cg, .cs, .lu, .cv, .wb, .wt)
+	sb.WriteString(inst.Cache.String())
 
-    // Rounding modifier (.rn, .rz, .rm, .rp)
-    if inst.Rounding != ptx.RoundNone {
-        parts = append(parts, inst.Rounding.String())
-    }
+	// 6. Scope
+	// (.cta, .gpu, .sys, .cluster)
+	sb.WriteString(inst.Scope.String())
 
-    // Vector width (.v2, .v4)
-    if inst.Vec != ptx.Scalar {
-        parts = append(parts, inst.Vec.String())
-    }
+	// 7. Rounding Mode
+	// (.rn, .rz, .rm, .rp, .rni, .rzi, etc.)
+	sb.WriteString(inst.Rounding.String())
 
-    // Instruction type (.u32, .f32, .f64, etc.)
-    if inst.Typ != 0 {
-        // For cvt: emit dstType.srcType
-        if inst.Op == ptx.OpCvt && inst.SrcType != 0 {
-            parts = append(parts, inst.Typ.String()+"."+stripDot(inst.SrcType.String()))
-        } else {
-            parts = append(parts, inst.Typ.String())
-        }
-    }
+	// 8. Vector Size
+	// (.v2, .v4, .v8)
+	sb.WriteString(inst.Vec.String())
 
-    return strings.Join(parts, "")
+	// 9. Types
+	// Special handling for Conversion instructions (cvt, cvt.pack) and Mixed Precision
+	if inst.Op == ptx.OpCvt || inst.Op == ptx.OpCvtPack {
+		// Destination Type (convertType)
+		if inst.Typ != 0 {
+			sb.WriteString(inst.Typ.String())
+		}
+		// Source Type (abType)
+		if inst.SrcType != 0 {
+			sb.WriteString(inst.SrcType.String())
+		}
+		// cvt.pack 3rd type (cType) logic:
+		// Syntax: cvt.pack.sat.convertType.abType.cType d, a, b, c
+		// If 3 source operands are present (a, b, c), we append the cType.
+		// In most contexts this is .b32.
+		if inst.Op == ptx.OpCvtPack && len(inst.Src) > 2 {
+			sb.WriteString(".b32")
+		}
+	} else {
+		// Standard instructions (add.u32, ld.global.f32)
+		if inst.Typ != 0 {
+			sb.WriteString(inst.Typ.String())
+		}
+
+		// Mixed Precision / Explicit Source Type variants
+		// Examples: add.f32.f16, sub.f32.bf16
+		// Only append SrcType if it differs or is explicitly set and not handled above
+		if inst.SrcType != 0 {
+			sb.WriteString(inst.SrcType.String())
+		}
+	}
+
+	return sb.String()
 }
 
 // buildOperands constructs the comma-separated operand string.

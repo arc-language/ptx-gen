@@ -185,6 +185,23 @@ const (
 	OpStackSave     // stacksave
 	OpCreatePolicy  // createpolicy
 	OpApplyPriority // applypriority
+
+
+	OpLdu Opcode = iota // ldu
+    OpStBulk            // st.bulk
+    OpMultimemLdReduce  // multimem.ld_reduce
+    OpMultimemSt        // multimem.st
+    OpMultimemRed       // multimem.red
+
+
+	// ---- Data Movement (Advanced) ----
+	OpPrefetchu                   // prefetchu
+	OpIsSpacep                    // isspacep
+
+
+	// ---- Data Movement (Async & packed) ----
+    OpMapa                           // mapa
+    OpCpAsyncWaitAll                 // cp.async.wait_all
 )
 
 func (o Opcode) String() string {
@@ -489,6 +506,25 @@ func (o Opcode) String() string {
 		return "createpolicy"
 	case OpApplyPriority:
 		return "applypriority"
+	case OpLdu:
+        return "ldu"
+    case OpStBulk:
+        return "st.bulk"
+    case OpMultimemLdReduce:
+        return "multimem.ld_reduce"
+    case OpMultimemSt:
+        return "multimem.st"
+    case OpMultimemRed:
+        return "multimem.red"
+	case OpPrefetchu:
+		return "prefetchu"
+	case OpIsSpacep:
+		return "isspacep"
+    case OpMapa:
+        return "mapa"
+    case OpCpAsyncWaitAll:
+        return "cp.async.wait_all"
+
 	default:
 		return "unknown"
 	}

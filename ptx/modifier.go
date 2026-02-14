@@ -79,6 +79,71 @@ const (
 
     // --- New Modifier for Half-Precision FMA (Section 9.7.4.4) ---
     ModOOB // .oob (Out of bounds)
+
+    ModLeft  Modifier = iota // .l (for shf.l)
+    ModRight                 // .r (for shf.r)
+
+
+    // --- Prmt Modes (Section 9.7.9.7) ---
+	ModF4e  Modifier = iota + 100 // .f4e (Forward 4 extract)
+	ModB4e                        // .b4e (Backward 4 extract)
+	ModRc8                        // .rc8 (Replicate 8)
+	ModEcl                        // .ecl (Edge clamp left)
+	ModEcr                        // .ecr (Edge clamp right)
+	ModRc16                       // .rc16 (Replicate 16)
+
+	// --- Cache Eviction Priorities (Section 9.7.9.2) ---
+	// L1 Specific
+	ModL1EvictNormal    // .L1::evict_normal
+	ModL1EvictUnchanged // .L1::evict_unchanged
+	ModL1EvictFirst     // .L1::evict_first
+	ModL1EvictLast      // .L1::evict_last
+	ModL1NoAllocate     // .L1::no_allocate
+
+	// L2 Specific
+	ModL2EvictNormal // .L2::evict_normal
+	ModL2EvictFirst  // .L2::evict_first
+	ModL2EvictLast   // .L2::evict_last
+
+	// --- Prefetch Sizes (Section 9.7.9.8) ---
+	ModL2Prefetch64B  // .L2::64B
+	ModL2Prefetch128B // .L2::128B
+	ModL2Prefetch256B // .L2::256B
+
+	// --- Cache Hints ---
+	ModL2CacheHint // .L2::cache_hint
+	
+	// --- Misc Load Modifiers ---
+	ModNC // .nc (Non-coherent, used in ld.global.nc if not implicit in opcode)
+
+    // Completion Mechanism (st.async)
+    ModMbarrierCompleteTxBytes Modifier = iota + 200 // .mbarrier::complete_tx::bytes
+
+    // Accumulation Precision (multimem)
+    ModAccF32 // .acc::f32
+    ModAccF16 // .acc::f16
+
+
+    // --- Cvt / Data Movement Modifiers ---
+	ModTo            Modifier = iota + 300 // .to (cvta.to)
+	ModTensormap                           // .tensormap (prefetch)
+	ModRange                               // .range (createpolicy)
+	ModFractional                          // .fractional (createpolicy)
+	ModSatFinite                           // .satfinite (cvt)
+	ModScaledN2UE8M0                       // .scaled::n2::ue8m0 (cvt scaling)
+
+
+    // --- Async Copy Modifiers ---
+    ModMulticastCluster Modifier = iota + 400 // .multicast::cluster
+    ModBulkGroup                              // .bulk_group
+    ModCpMask                                 // .cp_mask
+    
+    // State Spaces used as modifiers in instructions (like cp.async)
+    // We prefix them to avoid collision with generic StateSpace enum
+    ModSpaceGlobal        // .global
+    ModSpaceShared        // .shared
+    ModSpaceSharedCTA     // .shared::cta
+    ModSpaceSharedCluster // .shared::cluster
 )
 
 func (m Modifier) String() string {
@@ -181,6 +246,94 @@ func (m Modifier) String() string {
         return ".abs"
     case ModOOB:
         return ".oob"
+    case ModLeft:
+        return ".l"
+    case ModRight:
+        return ".r"
+    // Prmt
+	case ModF4e:
+		return ".f4e"
+	case ModB4e:
+		return ".b4e"
+	case ModRc8:
+		return ".rc8"
+	case ModEcl:
+		return ".ecl"
+	case ModEcr:
+		return ".ecr"
+	case ModRc16:
+		return ".rc16"
+
+	// L1 Eviction
+	case ModL1EvictNormal:
+		return ".L1::evict_normal"
+	case ModL1EvictUnchanged:
+		return ".L1::evict_unchanged"
+	case ModL1EvictFirst:
+		return ".L1::evict_first"
+	case ModL1EvictLast:
+		return ".L1::evict_last"
+	case ModL1NoAllocate:
+		return ".L1::no_allocate"
+
+	// L2 Eviction
+	case ModL2EvictNormal:
+		return ".L2::evict_normal"
+	case ModL2EvictFirst:
+		return ".L2::evict_first"
+	case ModL2EvictLast:
+		return ".L2::evict_last"
+
+	// Prefetch
+	case ModL2Prefetch64B:
+		return ".L2::64B"
+	case ModL2Prefetch128B:
+		return ".L2::128B"
+	case ModL2Prefetch256B:
+		return ".L2::256B"
+
+	// Hints
+	case ModL2CacheHint:
+		return ".L2::cache_hint"
+	case ModNC:
+		return ".nc"
+
+    case ModMbarrierCompleteTxBytes:
+        return ".mbarrier::complete_tx::bytes"
+    case ModAccF32:
+        return ".acc::f32"
+    case ModAccF16:
+        return ".acc::f16"
+
+    case ModTo:
+		return ".to"
+	case ModTensormap:
+		return ".tensormap"
+	case ModRange:
+		return ".range"
+	case ModFractional:
+		return ".fractional"
+	case ModSatFinite:
+		return ".satfinite"
+	case ModScaledN2UE8M0:
+		return ".scaled::n2::ue8m0"
+
+    case ModMulticastCluster:
+        return ".multicast::cluster"
+    case ModBulkGroup:
+        return ".bulk_group"
+    case ModCpMask:
+        return ".cp_mask"
+    case ModSpaceGlobal:
+        return ".global"
+    case ModSpaceShared:
+        return ".shared"
+    case ModSpaceSharedCTA:
+        return ".shared::cta"
+    case ModSpaceSharedCluster:
+        return ".shared::cluster"
+
+
     default:
         return ""
     }
