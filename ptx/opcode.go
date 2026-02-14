@@ -223,8 +223,11 @@ const (
 	// ---- Tensormap (Section 9.7.9.28) ----
 	OpTensormapReplace // tensormap.replace
 
-	// ---- Texture & Surface Queries (Section 9.7.10.5) ----
-	OpIstypep // istypep
+	OpIstypep                   // istypep
+
+	// ---- Parallel Synchronization (Section 9.7.13) ----
+	OpBarWarpSync      // bar.warp.sync
+	OpVote             // vote (non-sync version)
 )
 
 func (o Opcode) String() string {
@@ -557,8 +560,6 @@ func (o Opcode) String() string {
         return "multimem.cp.reduce.async.bulk"
     case OpCpAsyncBulkTensor:
         return "cp.async.bulk.tensor"
-	case OpIstypep:
-			return "istypep"
 	case OpCpReduceAsyncBulkTensor:
 		return "cp.reduce.async.bulk.tensor"
 	case OpCpAsyncBulkPrefetchTensor:
@@ -569,6 +570,11 @@ func (o Opcode) String() string {
 		return "cp.async.bulk.wait_group"
 	case OpTensormapReplace:
 		return "tensormap.replace"
+
+	case OpBarWarpSync:
+		return "bar.warp.sync"
+	case OpVote:
+		return "vote"
 
 	default:
 		return "unknown"

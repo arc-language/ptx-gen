@@ -243,6 +243,23 @@ const (
 
     ModB Modifier = iota + 700 // .b (unformatted/byte)
     ModP                       // .p (formatted/element)
+
+	// --- Barrier Ops ---
+	ModArrive  // .arrive
+	ModWait    // .wait
+	ModAligned // .aligned
+
+	// --- Memory Consistency Restrictions ---
+	ModOpRestrict   // .op_restrict
+	ModSyncRestrict // .sync_restrict
+	ModMbarrierInitRestrict // .mbarrier_init
+
+	// --- Vector Widths (Atomics) ---
+	ModV8 // .v8
+
+	// --- Atomic Ops ---
+	ModCas  // .cas
+	ModExch // .exch
 )
 
 func (m Modifier) String() string {
@@ -588,6 +605,25 @@ func (m Modifier) String() string {
         return ".b"
     case ModP:
         return ".p"
+
+    case ModArrive:
+		return ".arrive"
+	case ModWait:
+		return ".wait"
+	case ModAligned:
+		return ".aligned"
+	case ModOpRestrict:
+		return ".op_restrict"
+	case ModSyncRestrict:
+		return ".sync_restrict"
+	case ModMbarrierInitRestrict:
+		return ".mbarrier_init"
+	case ModV8:
+		return ".v8"
+	case ModCas:
+		return ".cas"
+	case ModExch:
+		return ".exch"
 
     default:
         return ""

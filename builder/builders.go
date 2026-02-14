@@ -315,9 +315,6 @@ func Ret() *Instruction {
 	return &Instruction{Op: ptx.OpRet}
 }
 
-func Exit() *Instruction {
-	return &Instruction{Op: ptx.OpExit}
-}
 
 // ---- Synchronization ----
 
@@ -1308,4 +1305,91 @@ func CallIndirect(funcPtr Operand, retParams []Operand, args []Operand, proto Op
 		inst.Dst = retParams[0]
 	}
 	return inst
+}
+
+
+// ---- Thread Termination ----
+
+func Exit() *Instruction {
+	return &Instruction{Op: ptx.OpExit}
+}
+
+// ---- Parallel Synchronization (Section 9.7.13) ----
+
+// BarrierCTA performs CTA-level barrier synchronization.
+// Usage: BarrierCTA(Imm(0)).WithMod(ptx.ModSync, ptx.ModAligned)
+func BarrierCTA(id Operand, threadCount ...Operand) *Instruction {
+	srcs := []Operand{id}
+	srcs = append(srcs, threadCount...)
+	return &Instruction{
+		Op:    ptx.OpBar, // bar and barrier are often synonymous in IR
+		Src:   srcs,
+		Space: ptx.SharedCTA,
+	}
+}
+
+// BarWarpSync synchronizes threads within a warp.
+// membermask is a 32-bit bitmask of lanes.
+func BarWarpSync(membermask Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpBarWarpSync,
+		Src: []Operand{membermask},
+	}
+}
+
+// BarrierClusterArrive marks arrival at a cluster barrier.
+// Use WithMod(ptx.ModRelaxed, ptx.ModAligned) for variants.
+func BarrierClusterArrive() *Instruction {
+	return &Instruction{
+		Op:        ptx.OpBarrierCluster,
+		Modifiers: []ptx.Modifier{ptx.ModArrive},
+	}
+}
+
+// BarrierClusterWait waits for cluster barrier completion.
+func BarrierClusterWait() *Instruction {
+	return &Instruction{
+		Op:        ptx.OpBarrierCluster,
+		Modifiers: []ptx.Modifier{ptx.ModWait},
+	}
+}
+
+// ---- Memory Ordering (Section 9.7.13.4) ----
+
+
+// FenceProxyAsync creates an asynchronous proxy fence.
+func FenceProxyAsync(space ptx.StateSpace) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpFence,
+		Space:     space,
+		Modifiers: []ptx.Modifier{ptx.ModProxy, ptx.ModAsync},
+	}
+}
+
+// ---- Atomic Operations (Section 9.7.13.5) ----
+
+// AtomCAS performs a Compare-And-Swap.
+
+// AtomExch performs an Exchange.
+func AtomExch(typ ptx.Type, dst, addr, val Operand) *Instruction {
+	return &Instruction{
+		Op:    ptx.OpAtom,
+		Typ:   typ,
+		Dst:   dst,
+		Src:   []Operand{addr, val},
+		Modifiers: []ptx.Modifier{ptx.ModExch},
+	}
+}
+
+// AtomVector performs a vector atomic operation (sm_90+).
+// Usage: AtomVector(ptx.OpAdd, ptx.V4, ptx.F32, dstVec, addr, srcVec)
+func AtomVector(op ptx.Opcode, vec ptx.VectorSize, typ ptx.Type, dst, addr, src Operand) *Instruction {
+	return &Instruction{
+		Op:    op,
+		Vec:   vec,
+		Typ:   typ,
+		Dst:   dst,
+		Src:   []Operand{addr, src},
+		Space: ptx.Global,
+	}
 }
