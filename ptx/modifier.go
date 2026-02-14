@@ -58,6 +58,13 @@ const (
     ModAtomAnd              // .and
     ModAtomOr               // .or
     ModAtomXor              // .xor
+
+    // --- New Memory Consistency Modifiers ---
+    ModWeak                 // .weak (Weak operations)
+    ModSC                   // .sc (Sequentially consistent fence)
+    ModProxy                // .proxy (Proxy fence/membar)
+    ModAlias                // .alias (Alias proxy)
+    ModAsync                // .async (Used in async proxy fences)
 )
 
 func (m Modifier) String() string {
@@ -132,6 +139,18 @@ func (m Modifier) String() string {
         return ".or"
     case ModAtomXor:
         return ".xor"
+
+    case ModWeak:
+        return ".weak"
+    case ModSC:
+        return ".sc"
+    case ModProxy:
+        return ".proxy"
+    case ModAlias:
+        return ".alias"
+    case ModAsync:
+        return ".async"
+
     default:
         return ""
     }

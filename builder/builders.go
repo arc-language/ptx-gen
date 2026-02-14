@@ -382,3 +382,76 @@ func MbarrierInit(addr, count Operand) *Instruction {
 func MbarrierArrive(addr Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMbarrierArrive, Src: []Operand{addr}}
 }
+
+
+// ---- Memory Consistency & Fences (Section 8) ----
+
+// FenceSC creates a sequentially consistent fence (fence.sc.scope).
+// Scope determines the visibility (e.g., .cta, .gpu, .sys).
+// Reference: Section 8.10.2 Fence-SC
+func FenceSC(scope ptx.Scope) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpFence,
+		Scope:     scope,
+		Modifiers: []ptx.Modifier{ptx.ModSC},
+	}
+}
+
+// FenceAcqRel creates an acquire-release fence (fence.acq_rel.scope).
+// Reference: Section 8.4 Operation types
+func FenceAcqRel(scope ptx.Scope) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpFence,
+		Scope:     scope,
+		Modifiers: []ptx.Modifier{ptx.ModAcqRel},
+	}
+}
+
+// FenceProxy creates a proxy fence for aliasing or async operations.
+// kind is typically ptx.ModAlias or ptx.ModAsync.
+// Reference: Section 8.6 Proxies
+func FenceProxy(kind ptx.Modifier) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpFence,
+		Modifiers: []ptx.Modifier{ptx.ModProxy, kind},
+	}
+}
+
+// MembarProxy creates a proxy membar (membar.proxy).
+// Reference: Section 8.4 Operation types
+func MembarProxy() *Instruction {
+	return &Instruction{
+		Op:        ptx.OpMembar,
+		Modifiers: []ptx.Modifier{ptx.ModProxy},
+	}
+}
+
+// CpAsyncMbarrierArrive performs an asynchronous arrive on an mbarrier object.
+// Reference: Section 8.9.1.1 Asynchronous Operations
+func CpAsyncMbarrierArrive(addr Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpCpAsyncMbarrierArrive,
+		Src: []Operand{addr},
+	}
+}
+
+// LdWeak creates a weak load (ld.weak).
+// Reference: Section 8.4 Operation types
+func LdWeak(dst, addr Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpLd,
+		Dst:       dst,
+		Src:       []Operand{addr},
+		Modifiers: []ptx.Modifier{ptx.ModWeak},
+	}
+}
+
+// StWeak creates a weak store (st.weak).
+// Reference: Section 8.4 Operation types
+func StWeak(addr, src Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpSt,
+		Src:       []Operand{addr, src},
+		Modifiers: []ptx.Modifier{ptx.ModWeak},
+	}
+}

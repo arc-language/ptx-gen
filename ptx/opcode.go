@@ -119,6 +119,7 @@ const (
 	OpCpAsyncWaitGroup
 	OpCpAsyncBulk
 	OpCpReduceAsyncBulk
+	OpCpAsyncMbarrierArrive
 
 	// ---- Warp matrix (tensor core) ----
 	OpWmmaLoad
@@ -380,6 +381,8 @@ func (o Opcode) String() string {
 		return "cp.async.bulk"
 	case OpCpReduceAsyncBulk:
 		return "cp.reduce.async.bulk"
+	case OpCpAsyncMbarrierArrive:
+        return "cp.async.mbarrier.arrive"
 	case OpWmmaLoad:
 		return "wmma.load"
 	case OpWmmaStore:
