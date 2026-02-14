@@ -4,7 +4,7 @@ import (
 	"github.com/arc-language/ptx-gen/ptx"
 )
 
-// ---- Integer & Float Arithmetic ----
+// Integer & float arithmetic
 
 func Add(dst, src0, src1 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpAdd, Dst: dst, Src: []Operand{src0, src1}}
@@ -78,7 +78,7 @@ func Dp2a(dst, src0, src1, src2 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpDp2a, Dst: dst, Src: []Operand{src0, src1, src2}}
 }
 
-// ---- Extended-precision integer arithmetic ----
+// Extended-precision integer arithmetic
 
 func AddCC(dst, src0, src1 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpAddCC, Dst: dst, Src: []Operand{src0, src1}}
@@ -104,7 +104,7 @@ func Madc(dst, src0, src1, src2 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMadc, Dst: dst, Src: []Operand{src0, src1, src2}}
 }
 
-// ---- Float-only math ----
+// Float-only math
 
 func Rcp(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpRcp, Dst: dst, Src: []Operand{src}}
@@ -146,7 +146,7 @@ func Copysign(dst, src0, src1 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpCopysign, Dst: dst, Src: []Operand{src0, src1}}
 }
 
-// ---- Bit manipulation ----
+// Bit manipulation
 
 func Popc(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpPopc, Dst: dst, Src: []Operand{src}}
@@ -184,7 +184,7 @@ func Szext(dst, src, size Operand) *Instruction {
 	return &Instruction{Op: ptx.OpSzext, Dst: dst, Src: []Operand{src, size}}
 }
 
-// ---- Logic & shift ----
+// Logic & shift
 
 func And(dst, src0, src1 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpAnd, Dst: dst, Src: []Operand{src0, src1}}
@@ -230,7 +230,7 @@ func Prmt(dst, a, b, c Operand) *Instruction {
 	return &Instruction{Op: ptx.OpPrmt, Dst: dst, Src: []Operand{a, b, c}}
 }
 
-// ---- Comparison & selection ----
+// Comparison & selection
 
 func Setp(cmp ptx.CmpOp, dst, a, b Operand) *Instruction {
 	return &Instruction{Op: ptx.OpSetp, Cmp: cmp, Dst: dst, Src: []Operand{a, b}}
@@ -248,7 +248,7 @@ func Slct(dst, a, b, c Operand) *Instruction {
 	return &Instruction{Op: ptx.OpSlct, Dst: dst, Src: []Operand{a, b, c}}
 }
 
-// ---- Data movement & conversion ----
+// Data movement & conversion
 
 func Mov(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMov, Dst: dst, Src: []Operand{src}}
@@ -329,7 +329,7 @@ func GetCTARank(dst, addr Operand) *Instruction {
 	return &Instruction{Op: ptx.OpGetCTARank, Dst: dst, Src: []Operand{addr}}
 }
 
-// ---- Warp shuffle ----
+// Warp shuffle
 
 func ShflSync(dst, a, b, c, mask Operand) *Instruction {
 	return &Instruction{Op: ptx.OpShfl, Dst: dst, Src: []Operand{a, b, c, mask}, Modifiers: []ptx.Modifier{ptx.ModSync}}
@@ -339,7 +339,7 @@ func Shfl(dst, a, b, c Operand) *Instruction {
 	return &Instruction{Op: ptx.OpShfl, Dst: dst, Src: []Operand{a, b, c}}
 }
 
-// ---- Stack manipulation ----
+// Stack manipulation
 
 func Alloca(dst, size Operand) *Instruction {
 	return &Instruction{Op: ptx.OpAlloca, Dst: dst, Src: []Operand{size}}
@@ -353,7 +353,7 @@ func StackRestore(src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpStackRestore, Src: []Operand{src}}
 }
 
-// ---- Control flow ----
+// Control flow
 
 func Bra(label string) *Instruction {
 	return &Instruction{Op: ptx.OpBra, Src: []Operand{&Symbol{Name: label}}}
@@ -394,7 +394,7 @@ func Exit() *Instruction {
 	return &Instruction{Op: ptx.OpExit}
 }
 
-// ---- Synchronization ----
+// Synchronization
 
 func BarSync(id Operand) *Instruction {
 	return &Instruction{Op: ptx.OpBar, Src: []Operand{id}}
@@ -446,11 +446,7 @@ func FenceProxy(kind ptx.Modifier) *Instruction {
 	return &Instruction{Op: ptx.OpFence, Modifiers: []ptx.Modifier{ptx.ModProxy, kind}}
 }
 
-func FenceProxyAsync(space ptx.StateSpace) *Instruction {
-	return &Instruction{Op: ptx.OpFence, Space: space, Modifiers: []ptx.Modifier{ptx.ModProxy, ptx.ModAsync}}
-}
-
-// ---- Atomics ----
+// Atomics
 
 func Atom(op ptx.Modifier, dst, addr, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpAtom, Dst: dst, Src: []Operand{addr, src}, Modifiers: []ptx.Modifier{op}}
@@ -472,7 +468,7 @@ func Red(op ptx.Modifier, addr, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpRed, Src: []Operand{addr, src}, Modifiers: []ptx.Modifier{op}}
 }
 
-// ---- Warp voting ----
+// Warp voting
 
 func VoteSync(mode ptx.Modifier, dst, mask, pred Operand) *Instruction {
 	return &Instruction{Op: ptx.OpVoteSync, Dst: dst, Src: []Operand{mask, pred}, Modifiers: []ptx.Modifier{mode}}
@@ -486,7 +482,7 @@ func ReduxSync(op ptx.Modifier, dst, mask, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpReduxSync, Dst: dst, Src: []Operand{mask, src}, Modifiers: []ptx.Modifier{op}}
 }
 
-// ---- Matrix ----
+// Matrix
 
 func LdMatrix(dst, addr Operand) *Instruction {
 	return &Instruction{Op: ptx.OpLdMatrix, Dst: dst, Src: []Operand{addr}}
@@ -500,7 +496,7 @@ func Wgmma(dst Operand, args ...Operand) *Instruction {
 	return &Instruction{Op: ptx.OpWgmma, Dst: dst, Src: args}
 }
 
-// ---- Mbarrier ----
+// Mbarrier
 
 func MbarrierInit(addr, count Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMbarrierInit, Src: []Operand{addr, count}}
@@ -510,11 +506,104 @@ func MbarrierArrive(addr Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMbarrierArrive, Src: []Operand{addr}}
 }
 
+func MbarrierInval(addr Operand) *Instruction {
+	return &Instruction{Op: ptx.OpMbarrierInval, Src: []Operand{addr}}
+}
+
+func MbarrierExpectTx(addr, txCount Operand) *Instruction {
+	return &Instruction{Op: ptx.OpMbarrierExpectTx, Src: []Operand{addr, txCount}}
+}
+
+func MbarrierCompleteTx(addr, txCount Operand) *Instruction {
+	return &Instruction{Op: ptx.OpMbarrierCompleteTx, Src: []Operand{addr, txCount}}
+}
+
+func MbarrierArriveNoComplete(dstState, addr, count Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpMbarrierArrive,
+		Dst:       dstState,
+		Src:       []Operand{addr, count},
+		Modifiers: []ptx.Modifier{ptx.ModNoComplete},
+	}
+}
+
+func MbarrierArriveExpectTx(dstState, addr, txCount Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpMbarrierArrive,
+		Dst:       dstState,
+		Src:       []Operand{addr, txCount},
+		Modifiers: []ptx.Modifier{ptx.ModExpectTx},
+	}
+}
+
+func MbarrierArriveDrop(dstState, addr, count Operand) *Instruction {
+	srcs := []Operand{addr}
+	if count != nil {
+		srcs = append(srcs, count)
+	}
+	return &Instruction{Op: ptx.OpMbarrierArriveDrop, Dst: dstState, Src: srcs}
+}
+
+func MbarrierArriveDropNoComplete(dstState, addr, count Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpMbarrierArriveDrop,
+		Dst:       dstState,
+		Src:       []Operand{addr, count},
+		Modifiers: []ptx.Modifier{ptx.ModNoComplete},
+	}
+}
+
+func MbarrierTestWait(waitComplete, addr, state Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMbarrierTestWait,
+		Dst: waitComplete,
+		Src: []Operand{addr, state},
+	}
+}
+
+func MbarrierTestWaitParity(waitComplete, addr, phaseParity Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpMbarrierTestWait,
+		Dst:       waitComplete,
+		Src:       []Operand{addr, phaseParity},
+		Modifiers: []ptx.Modifier{ptx.ModParity},
+	}
+}
+
+func MbarrierTryWait(waitComplete, addr, state Operand, suspendHint Operand) *Instruction {
+	srcs := []Operand{addr, state}
+	if suspendHint != nil {
+		srcs = append(srcs, suspendHint)
+	}
+	return &Instruction{
+		Op:  ptx.OpMbarrierTryWait,
+		Dst: waitComplete,
+		Src: srcs,
+	}
+}
+
+func MbarrierPendingCount(countDst, state Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMbarrierPendingCount,
+		Dst: countDst,
+		Src: []Operand{state},
+		Typ: ptx.B64,
+	}
+}
+
 func CpAsyncMbarrierArrive(addr Operand) *Instruction {
 	return &Instruction{Op: ptx.OpCpAsyncMbarrierArrive, Src: []Operand{addr}}
 }
 
-// ---- Multimem ----
+func CpAsyncMbarrierArriveNoInc(addr Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpCpAsyncMbarrierArrive,
+		Src:       []Operand{addr},
+		Modifiers: []ptx.Modifier{ptx.ModNoInc},
+	}
+}
+
+// Multimem
 
 func MultimemLdReduce(dst, addr Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMultimemLdReduce, Dst: dst, Src: []Operand{addr}}
@@ -540,7 +629,7 @@ func MultimemCpReduceAsyncBulk(dst, src, size Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMultimemCpReduceAsyncBulk, Src: []Operand{dst, src, size}}
 }
 
-// ---- Cache & eviction policy ----
+// Cache & eviction policy
 
 func ApplyPriority(addr, size Operand) *Instruction {
 	return &Instruction{Op: ptx.OpApplyPriority, Src: []Operand{addr, size}}
@@ -554,7 +643,7 @@ func CreatePolicy(dst Operand, args ...Operand) *Instruction {
 	return &Instruction{Op: ptx.OpCreatePolicy, Dst: dst, Src: args}
 }
 
-// ---- Async copy ----
+// Async copy
 
 func CpAsync(dst, src, size Operand, args ...Operand) *Instruction {
 	srcs := []Operand{dst, src, size}
@@ -604,7 +693,7 @@ func CpReduceAsyncBulk(dst, src, size Operand, mbar Operand) *Instruction {
 	return &Instruction{Op: ptx.OpCpReduceAsyncBulk, Src: srcs, Space: ptx.SharedCTA}
 }
 
-// ---- Async bulk tensor ----
+// Async bulk tensor
 
 func CpAsyncBulkTensor(
 	dim ptx.Modifier,
@@ -651,7 +740,7 @@ func CpAsyncBulkPrefetchTensor(
 	return &Instruction{Op: ptx.OpCpAsyncBulkPrefetchTensor, Src: srcs, Modifiers: []ptx.Modifier{dim, ptx.ModLevelL2}}
 }
 
-// ---- Tensormap ----
+// Tensormap
 
 func TensormapReplace(field ptx.Modifier, addr Operand, args ...Operand) *Instruction {
 	srcs := []Operand{addr}
@@ -659,7 +748,7 @@ func TensormapReplace(field ptx.Modifier, addr Operand, args ...Operand) *Instru
 	return &Instruction{Op: ptx.OpTensormapReplace, Src: srcs, Modifiers: []ptx.Modifier{ptx.ModLoadTile, field}}
 }
 
-// ---- Texture ----
+// Texture
 
 func Tex(geom ptx.Modifier, dst Operand, tex Operand, sampler Operand, coords []Operand) *Instruction {
 	srcs := []Operand{tex}
@@ -693,7 +782,7 @@ func Istypep(typ ptx.Modifier, dstPred Operand, addr Operand) *Instruction {
 	return &Instruction{Op: ptx.OpIstypep, Dst: dstPred, Src: []Operand{addr}, Modifiers: []ptx.Modifier{typ}}
 }
 
-// ---- Surface ----
+// Surface
 
 func Suld(geom ptx.Modifier, dst Operand, surf Operand, coords []Operand) *Instruction {
 	srcs := []Operand{surf}
@@ -717,4 +806,343 @@ func Sured(geom ptx.Modifier, surf Operand, coords []Operand, val Operand) *Inst
 
 func Suq(query ptx.Modifier, dst Operand, surf Operand) *Instruction {
 	return &Instruction{Op: ptx.OpSuq, Dst: dst, Src: []Operand{surf}, Modifiers: []ptx.Modifier{query}}
+}
+
+// Tensormap operations
+
+// TensormapCpFenceproxy performs a fused copy and fence (sm_90+).
+// Implies .global.shared::cta, .tensormap::generic, .sync, .aligned.
+func TensormapCpFenceproxy(dstGlobal, srcShared, size Operand, scope ptx.Scope) *Instruction {
+	return &Instruction{
+		Op:    ptx.OpTensormapCpFenceproxy,
+		Src:   []Operand{dstGlobal, srcShared, size},
+		Scope: scope,
+		Modifiers: []ptx.Modifier{
+			ptx.ModSpaceGlobal,
+			ptx.ModSpaceSharedCTA,
+			ptx.ModTensormapGeneric,
+			ptx.ModRelease,
+			ptx.ModSync,
+			ptx.ModAligned,
+		},
+	}
+}
+
+// Cluster launch control
+
+// ClusterlaunchcontrolTryCancel requests cancellation of a cluster (sm_100+).
+func ClusterlaunchcontrolTryCancel(addr, mbar Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpClusterlaunchcontrolTryCancel,
+		Src: []Operand{addr, mbar},
+		Modifiers: []ptx.Modifier{
+			ptx.ModAsync,
+			ptx.ModMbarrierCompleteTxBytes,
+			ptx.ModMulticastClusterAll,
+		},
+		Typ: ptx.B128,
+	}
+}
+
+// ClusterlaunchcontrolQueryCancelIsCanceled checks if cancellation succeeded.
+func ClusterlaunchcontrolQueryCancelIsCanceled(predDst, handle Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpClusterlaunchcontrolQueryCancel,
+		Dst:       predDst,
+		Src:       []Operand{handle},
+		Modifiers: []ptx.Modifier{ptx.ModIsCanceled},
+		Typ:       ptx.B128,
+	}
+}
+
+// ClusterlaunchcontrolQueryCancelGetFirstCTAId extracts the first CTA ID.
+// Returns a vector of 4x b32.
+func ClusterlaunchcontrolQueryCancelGetFirstCTAId(dstVec, handle Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpClusterlaunchcontrolQueryCancel,
+		Dst:       dstVec,
+		Src:       []Operand{handle},
+		Modifiers: []ptx.Modifier{ptx.ModGetFirstCTAId},
+		Typ:       ptx.B128,
+	}
+}
+
+// ClusterlaunchcontrolQueryCancelGetFirstCTAIdDim extracts a specific dimension (x, y, or z).
+// dim should be ptx.ModDimX, ptx.ModDimY, or ptx.ModDimZ.
+func ClusterlaunchcontrolQueryCancelGetFirstCTAIdDim(dstReg, handle Operand, dim ptx.Modifier) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpClusterlaunchcontrolQueryCancel,
+		Dst:       dstReg,
+		Src:       []Operand{handle},
+		Modifiers: []ptx.Modifier{ptx.ModGetFirstCTAId, dim},
+		Typ:       ptx.B128,
+	}
+}
+
+// WMMA
+
+// WmmaLoad creates a wmma.load instruction.
+// role: ModMatrixA, ModMatrixB, or ModMatrixC.
+// layout: ModRow or ModCol.
+// stride: optional (pass nil for default).
+func WmmaLoad(role, layout, shape ptx.Modifier, typ ptx.Type, dst, addr, stride Operand) *Instruction {
+	srcs := []Operand{addr}
+	if stride != nil {
+		srcs = append(srcs, stride)
+	}
+	return &Instruction{
+		Op:  ptx.OpWmmaLoad,
+		Typ: typ,
+		Dst: dst,
+		Src: srcs,
+		Modifiers: []ptx.Modifier{
+			role,
+			ptx.ModSync,
+			ptx.ModAligned,
+			shape,
+			layout,
+		},
+	}
+}
+
+// WmmaStore creates a wmma.store instruction.
+// role: ModMatrixD.
+// layout: ModRow or ModCol.
+// stride: optional (pass nil for default).
+func WmmaStore(role, layout, shape ptx.Modifier, typ ptx.Type, addr, src, stride Operand) *Instruction {
+	srcs := []Operand{addr, src}
+	if stride != nil {
+		srcs = append(srcs, stride)
+	}
+	return &Instruction{
+		Op:  ptx.OpWmmaStore,
+		Typ: typ,
+		Src: srcs,
+		Modifiers: []ptx.Modifier{
+			role,
+			ptx.ModSync,
+			ptx.ModAligned,
+			shape,
+			layout,
+		},
+	}
+}
+
+// WmmaMma creates a wmma.mma instruction performing D = A * B + C.
+func WmmaMma(shape, alayout, blayout ptx.Modifier, d, a, b, c Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpWmmaMma,
+		Dst: d,
+		Src: []Operand{a, b, c},
+		Modifiers: []ptx.Modifier{
+			ptx.ModSync,
+			ptx.ModAligned,
+			alayout,
+			blayout,
+			shape,
+		},
+	}
+}
+
+// WmmaMmaBitOp creates a wmma.mma.op.popc instruction for .b1 types.
+// op: ptx.ModAtomXor or ptx.ModAtomAnd.
+func WmmaMmaBitOp(op, shape, alayout, blayout ptx.Modifier, d, a, b, c Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpWmmaMma,
+		Dst: d,
+		Src: []Operand{a, b, c},
+		Modifiers: []ptx.Modifier{
+			op,
+			ptx.ModPopc,
+			ptx.ModSync,
+			ptx.ModAligned,
+			alayout,
+			blayout,
+			shape,
+		},
+	}
+}
+
+// MMA
+
+// Mma creates an mma.sync.aligned instruction.
+func Mma(shape, alayout, blayout ptx.Modifier, d, a, b, c Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMma,
+		Dst: d,
+		Src: []Operand{a, b, c},
+		Modifiers: []ptx.Modifier{
+			ptx.ModSync,
+			ptx.ModAligned,
+			alayout,
+			blayout,
+			shape,
+		},
+	}
+}
+
+// Ldmatrix loads matrices from shared memory.
+// shape: .m8n8, .m16n16, .m8n16
+// num: .x1, .x2, .x4
+func Ldmatrix(shape, num ptx.Modifier, typ ptx.Type, dst, addr Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpLdmatrix,
+		Typ: typ,
+		Dst: dst,
+		Src: []Operand{addr},
+		Modifiers: []ptx.Modifier{
+			ptx.ModSync,
+			ptx.ModAligned,
+			shape,
+			num,
+		},
+	}
+}
+
+// LdmatrixTrans loads matrices with transpose (.trans).
+func LdmatrixTrans(shape, num ptx.Modifier, typ ptx.Type, dst, addr Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpLdmatrix,
+		Typ: typ,
+		Dst: dst,
+		Src: []Operand{addr},
+		Modifiers: []ptx.Modifier{
+			ptx.ModSync,
+			ptx.ModAligned,
+			shape,
+			num,
+			ptx.ModTrans,
+		},
+	}
+}
+
+// Stmatrix stores matrices to shared memory.
+func Stmatrix(shape, num ptx.Modifier, typ ptx.Type, addr, src Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpStmatrix,
+		Typ: typ,
+		Src: []Operand{addr, src},
+		Modifiers: []ptx.Modifier{
+			ptx.ModSync,
+			ptx.ModAligned,
+			shape,
+			num,
+		},
+	}
+}
+
+// Movmatrix transposes a matrix in registers.
+func Movmatrix(shape ptx.Modifier, typ ptx.Type, dst, src Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMovmatrix,
+		Typ: typ,
+		Dst: dst,
+		Src: []Operand{src},
+		Modifiers: []ptx.Modifier{
+			ptx.ModSync,
+			ptx.ModAligned,
+			shape,
+			ptx.ModTrans,
+		},
+	}
+}
+
+// MmaBlockScaled creates an mma instruction with block scaling: D = (A * ScaleA) * (B * ScaleB) + C.
+// scaleVecSize: e.g. ptx.ModScaleVec1x, ptx.ModScaleVec2x.
+func MmaBlockScaled(shape, alayout, blayout, scaleVecSize ptx.Modifier, d, a, b, c, scaleA, selA, scaleB, selB Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMma,
+		Dst: d,
+		Src: []Operand{a, b, c, scaleA, selA, scaleB, selB},
+		Modifiers: []ptx.Modifier{
+			ptx.ModSync,
+			ptx.ModAligned,
+			alayout,
+			blayout,
+			shape,
+			ptx.ModBlockScale,
+			scaleVecSize,
+		},
+	}
+}
+
+// MmaSparse creates a sparse mma instruction.
+// spMod: ptx.ModSp or ptx.ModSpOrderedMetadata.
+// metadata: register containing indices of non-zero elements.
+// selector: immediate or register (0 or 1) indicating metadata ownership.
+func MmaSparse(spMod, shape, alayout, blayout ptx.Modifier, d, a, b, c, metadata, selector Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMma,
+		Dst: d,
+		Src: []Operand{a, b, c, metadata, selector},
+		Modifiers: []ptx.Modifier{
+			spMod,
+			ptx.ModSync,
+			ptx.ModAligned,
+			alayout,
+			blayout,
+			shape,
+		},
+	}
+}
+
+// MmaSparseBlockScaled creates a sparse mma instruction with block scaling.
+// selA and selB are typically VectorOp containing immediate values.
+func MmaSparseBlockScaled(
+	spMod, shape, alayout, blayout ptx.Modifier,
+	kind, scaleVecSize ptx.Modifier,
+	d, a, b, c, metadata, selector,
+	scaleA, selA, scaleB, selB Operand,
+) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMma,
+		Dst: d,
+		Src: []Operand{a, b, c, metadata, selector, scaleA, selA, scaleB, selB},
+		Modifiers: []ptx.Modifier{
+			spMod,
+			ptx.ModSync,
+			ptx.ModAligned,
+			shape,
+			alayout,
+			blayout,
+			kind,
+			ptx.ModBlockScale,
+			scaleVecSize,
+		},
+	}
+}
+
+// WGMMA synchronization
+
+// WgmmaFence enforces memory consistency for wgmma operations.
+func WgmmaFence() *Instruction {
+	return &Instruction{
+		Op:        ptx.OpWgmmaFence,
+		Modifiers: []ptx.Modifier{ptx.ModSync, ptx.ModAligned},
+	}
+}
+
+// WgmmaCommitGroup commits prior wgmma.mma_async operations to a group.
+func WgmmaCommitGroup() *Instruction {
+	return &Instruction{
+		Op:        ptx.OpWgmmaCommitGroup,
+		Modifiers: []ptx.Modifier{ptx.ModSync, ptx.ModAligned},
+	}
+}
+
+// WgmmaWaitGroup waits for completion of a specific number of groups.
+func WgmmaWaitGroup(n Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpWgmmaWaitGroup,
+		Src:       []Operand{n},
+		Modifiers: []ptx.Modifier{ptx.ModSync, ptx.ModAligned},
+	}
+}
+
+// FenceProxyAsync synchronizes generic proxy with async proxy.
+func FenceProxyAsync(scope ptx.Scope) *Instruction {
+	return &Instruction{
+		Op:    ptx.OpFenceProxyAsync,
+		Scope: scope,
+	}
 }

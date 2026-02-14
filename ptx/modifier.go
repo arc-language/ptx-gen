@@ -4,23 +4,23 @@ package ptx
 type Modifier int
 
 const (
-	// ---- Multiply width ----
+	// Multiply width
 	ModWide Modifier = iota
 	ModLo
 	ModHi
 
-	// ---- Saturation & flush ----
+	// Saturation & flush
 	ModSat
 	ModFtz
 
-	// ---- Approximation ----
+	// Approximation
 	ModApprox
 	ModFull
 
-	// ---- Uniformity ----
+	// Uniformity
 	ModUni
 
-	// ---- Memory consistency ----
+	// Memory consistency
 	ModAcquire
 	ModRelease
 	ModRelaxed
@@ -33,10 +33,10 @@ const (
 	ModAlias
 	ModAsync
 
-	// ---- Sync ----
+	// Sync
 	ModSync
 
-	// ---- Testp ----
+	// Testp
 	ModFinite
 	ModInfinite
 	ModNumber
@@ -44,13 +44,13 @@ const (
 	ModNormal
 	ModSubnormal
 
-	// ---- Shfl modes ----
+	// Shfl modes
 	ModShflUp
 	ModShflDown
 	ModShflBfly
 	ModShflIdx
 
-	// ---- Atomic operations ----
+	// Atomic operations
 	ModAtomAdd
 	ModAtomMin
 	ModAtomMax
@@ -64,7 +64,7 @@ const (
 	ModCas
 	ModExch
 
-	// ---- Arithmetic modifiers ----
+	// Arithmetic modifiers
 	ModRelu
 	ModCC
 	ModClamp
@@ -75,11 +75,11 @@ const (
 	ModAbs
 	ModOOB
 
-	// ---- Shift direction ----
+	// Shift direction
 	ModLeft
 	ModRight
 
-	// ---- Prmt modes ----
+	// Prmt modes
 	ModF4e
 	ModB4e
 	ModRc8
@@ -87,14 +87,14 @@ const (
 	ModEcr
 	ModRc16
 
-	// ---- L1 cache eviction ----
+	// L1 cache eviction
 	ModL1EvictNormal
 	ModL1EvictUnchanged
 	ModL1EvictFirst
 	ModL1EvictLast
 	ModL1NoAllocate
 
-	// ---- L2 cache eviction & prefetch ----
+	// L2 cache eviction & prefetch
 	ModL2EvictNormal
 	ModL2EvictFirst
 	ModL2EvictLast
@@ -105,12 +105,12 @@ const (
 	ModLevelL2
 	ModNC
 
-	// ---- Mbarrier & accumulation ----
+	// Mbarrier & accumulation
 	ModMbarrierCompleteTxBytes
 	ModAccF32
 	ModAccF16
 
-	// ---- Cvt / data movement ----
+	// Cvt / data movement
 	ModTo
 	ModTensormap
 	ModRange
@@ -118,25 +118,25 @@ const (
 	ModSatFinite
 	ModScaledN2UE8M0
 
-	// ---- Async copy ----
+	// Async copy
 	ModMulticastCluster
 	ModBulkGroup
 	ModCpMask
 
-	// ---- State spaces (used as modifiers) ----
+	// State spaces
 	ModSpaceGlobal
 	ModSpaceShared
 	ModSpaceSharedCTA
 	ModSpaceSharedCluster
 
-	// ---- Tensor dimensions ----
+	// Tensor dimensions
 	ModDim1D
 	ModDim2D
 	ModDim3D
 	ModDim4D
 	ModDim5D
 
-	// ---- Tensor load modes ----
+	// Tensor load modes
 	ModLoadTile
 	ModLoadTileGather4
 	ModLoadTileScatter4
@@ -145,11 +145,11 @@ const (
 	ModLoadIm2ColW128
 	ModLoadIm2ColNoOffs
 
-	// ---- CTA groups ----
+	// CTA groups
 	ModCtaGroup1
 	ModCtaGroup2
 
-	// ---- Texture geometries ----
+	// Texture geometries
 	ModNoFtz
 	ModGeom1D
 	ModGeom2D
@@ -161,18 +161,18 @@ const (
 	ModGeom2DMS
 	ModGeomA2DMS
 
-	// ---- Texture mipmap modes ----
+	// Texture mipmap modes
 	ModBase
 	ModLevel
 	ModGrad
 
-	// ---- Texture components ----
+	// Texture components
 	ModCompR
 	ModCompG
 	ModCompB
 	ModCompA
 
-	// ---- Tensormap fields ----
+	// Tensormap fields
 	ModFieldGlobalAddr
 	ModFieldRank
 	ModFieldBoxDim
@@ -186,7 +186,7 @@ const (
 	ModFieldFillMode
 	ModRead
 
-	// ---- Texture & surface query attributes ----
+	// Texture & surface query attributes
 	ModQueryWidth
 	ModQueryHeight
 	ModQueryDepth
@@ -203,32 +203,158 @@ const (
 	ModQueryNumSamples
 	ModQueryMemoryLayout
 
-	// ---- Surface clamp modes ----
+	// Surface clamp modes
 	ModClampTrap
 	ModClampClamp
 	ModClampZero
 
-	// ---- Type checks ----
+	// Type checks
 	ModTypeTexRef
 	ModTypeSamplerRef
 	ModTypeSurfRef
 
-	// ---- Surface format ----
+	// Surface format
 	ModB
 	ModP
 
-	// ---- Barrier ops ----
+	// Barrier ops
 	ModArrive
 	ModWait
 	ModAligned
 
-	// ---- Memory consistency restrictions ----
+	// Memory consistency restrictions
 	ModOpRestrict
 	ModSyncRestrict
 	ModMbarrierInitRestrict
 
-	// ---- Vector widths ----
+	// Vector widths
 	ModV8
+
+	// Barrier / completion
+	ModParity
+	ModNoComplete
+	ModNoInc
+	ModExpectTx
+
+	// Tensormap & cluster
+	ModTensormapGeneric
+	ModMulticastClusterAll
+	ModIsCanceled
+	ModGetFirstCTAId
+
+	// MMA block scaling (.kind)
+	ModKindMxf8f6f4
+	ModKindMxf4
+	ModKindMxf4nvf4
+
+	// MMA scale vector (.scale_vec)
+	ModScaleVec1x
+	ModScaleVec2x
+	ModScaleVec4x
+
+	// Dimension query
+	ModDimX
+	ModDimY
+	ModDimZ
+
+	// Matrix roles
+	ModMatrixA
+	ModMatrixB
+	ModMatrixC
+	ModMatrixD
+
+	// Matrix layouts
+	ModRow
+	ModCol
+
+	// WMMA/MMA shapes
+	ModShapeM16N16K16
+	ModShapeM8N32K16
+	ModShapeM32N8K16
+	ModShapeM16N16K8
+	ModShapeM8N8K4
+	ModShapeM8N8K32
+	ModShapeM8N8K128
+	ModShapeM16N8K4
+	ModShapeM16N8K8
+	ModShapeM16N8K16
+	ModShapeM16N8K32
+	ModShapeM16N8K64
+	ModShapeM16N8K128
+	ModShapeM16N8K256
+	ModShapeM8N8
+	ModShapeM16N16
+	ModShapeM8N16
+	ModShapeM16N8
+
+	// Matrix operations
+	ModPopc
+
+	// Type modifiers
+	ModTypeF16
+	ModTypeF32
+	ModTypeF64
+	ModTypeBF16
+	ModTypeTF32
+	ModTypeS32
+	ModTypeS8
+	ModTypeU8
+	ModTypeS4
+	ModTypeU4
+	ModTypeB1
+
+	// Matrix counts (.num)
+	ModNumX1
+	ModNumX2
+	ModNumX4
+
+	// Matrix data formats
+	ModDstFmtB8x16
+	ModSrcFmtB6x16P32
+	ModSrcFmtB4x16P64
+
+	// Transpose & block scale
+	ModTrans
+	ModBlockScale
+
+	// Sparse MMA
+	ModSp
+	ModSpOrderedMetadata
+
+	// M64 K16 shapes
+	ModShapeM64N8K16
+	ModShapeM64N16K16
+	ModShapeM64N24K16
+	ModShapeM64N32K16
+	ModShapeM64N40K16
+	ModShapeM64N48K16
+	ModShapeM64N56K16
+	ModShapeM64N64K16
+	ModShapeM64N72K16
+	ModShapeM64N80K16
+	ModShapeM64N88K16
+	ModShapeM64N96K16
+	ModShapeM64N104K16
+	ModShapeM64N112K16
+	ModShapeM64N120K16
+	ModShapeM64N128K16
+	ModShapeM64N256K16
+
+	// M64 K8 shapes
+	ModShapeM64N8K8
+	ModShapeM64N16K8
+	ModShapeM64N32K8
+
+	// M64 K32 shapes
+	ModShapeM64N8K32
+	ModShapeM64N16K32
+	ModShapeM64N32K32
+
+	// M64 K64 shapes
+	ModShapeM64N8K64
+
+	// M64 K256 shapes
+	ModShapeM64N8K256
 )
 
 func (m Modifier) String() string {
@@ -497,8 +623,6 @@ func (m Modifier) String() string {
 		return ".fill_mode"
 	case ModRead:
 		return ".read"
-	case ModLevelL2 + 1: // ModQueryWidth — guarded, see note below
-		return ".L2" // unreachable; ModLevelL2 already handled
 	case ModQueryWidth:
 		return ".width"
 	case ModQueryHeight:
@@ -559,6 +683,152 @@ func (m Modifier) String() string {
 		return ".mbarrier_init"
 	case ModV8:
 		return ".v8"
+	case ModParity:
+		return ".parity"
+	case ModNoComplete:
+		return ".noComplete"
+	case ModNoInc:
+		return ".noinc"
+	case ModExpectTx:
+		return ".expect_tx"
+	case ModTensormapGeneric:
+		return ".tensormap::generic"
+	case ModMulticastClusterAll:
+		return ".multicast::cluster::all"
+	case ModIsCanceled:
+		return ".is_canceled"
+	case ModGetFirstCTAId:
+		return ".get_first_ctaid"
+	case ModKindMxf8f6f4:
+		return ".kind::mxf8f6f4"
+	case ModKindMxf4:
+		return ".kind::mxf4"
+	case ModKindMxf4nvf4:
+		return ".kind::mxf4nvf4"
+	case ModScaleVec1x:
+		return ".scale_vec::1X"
+	case ModScaleVec2x:
+		return ".scale_vec::2X"
+	case ModScaleVec4x:
+		return ".scale_vec::4X"
+	case ModDimX:
+		return "::x"
+	case ModDimY:
+		return "::y"
+	case ModDimZ:
+		return "::z"
+	case ModMatrixA:
+		return ".a"
+	case ModMatrixB:
+		return ".b"
+	case ModMatrixC:
+		return ".c"
+	case ModMatrixD:
+		return ".d"
+	case ModRow:
+		return ".row"
+	case ModCol:
+		return ".col"
+	case ModShapeM16N16K16:
+		return ".m16n16k16"
+	case ModShapeM8N32K16:
+		return ".m8n32k16"
+	case ModShapeM32N8K16:
+		return ".m32n8k16"
+	case ModShapeM16N16K8:
+		return ".m16n16k8"
+	case ModShapeM8N8K4:
+		return ".m8n8k4"
+	case ModShapeM8N8K32:
+		return ".m8n8k32"
+	case ModShapeM8N8K128:
+		return ".m8n8k128"
+	case ModShapeM16N8K4:
+		return ".m16n8k4"
+	case ModShapeM16N8K8:
+		return ".m16n8k8"
+	case ModShapeM16N8K16:
+		return ".m16n8k16"
+	case ModShapeM16N8K32:
+		return ".m16n8k32"
+	case ModShapeM16N8K64:
+		return ".m16n8k64"
+	case ModShapeM16N8K128:
+		return ".m16n8k128"
+	case ModPopc:
+		return ".popc"
+	case ModTypeF16:
+		return ".f16"
+	case ModTypeF32:
+		return ".f32"
+	case ModTypeF64:
+		return ".f64"
+	case ModTypeBF16:
+		return ".bf16"
+	case ModTypeTF32:
+		return ".tf32"
+	case ModTypeS32:
+		return ".s32"
+	case ModTypeS8:
+		return ".s8"
+	case ModTypeU8:
+		return ".u8"
+	case ModTypeS4:
+		return ".s4"
+	case ModTypeU4:
+		return ".u4"
+	case ModTypeB1:
+		return ".b1"
+	case ModShapeM16N8K256:
+		return ".m16n8k256"
+	case ModShapeM8N8:
+		return ".m8n8"
+	case ModShapeM16N16:
+		return ".m16n16"
+	case ModShapeM8N16:
+		return ".m8n16"
+	case ModShapeM16N8:
+		return ".m16n8"
+	case ModNumX1:
+		return ".x1"
+	case ModNumX2:
+		return ".x2"
+	case ModNumX4:
+		return ".x4"
+	case ModDstFmtB8x16:
+		return ".b8x16"
+	case ModSrcFmtB6x16P32:
+		return ".b6x16_p32"
+	case ModSrcFmtB4x16P64:
+		return ".b4x16_p64"
+	case ModTrans:
+		return ".trans"
+	case ModBlockScale:
+		return ".block_scale"
+	case ModSp:
+		return ".sp"
+	case ModSpOrderedMetadata:
+		return ".sp::ordered_metadata"
+	case ModShapeM64N8K16:
+		return ".m64n8k16"
+	case ModShapeM64N16K16:
+		return ".m64n16k16"
+	case ModShapeM64N32K16:
+		return ".m64n32k16"
+	case ModShapeM64N64K16:
+		return ".m64n64k16"
+	case ModShapeM64N128K16:
+		return ".m64n128k16"
+	case ModShapeM64N256K16:
+		return ".m64n256k16"
+	case ModShapeM64N8K8:
+		return ".m64n8k8"
+	case ModShapeM64N32K8:
+		return ".m64n32k8"
+	case ModShapeM64N8K32:
+		return ".m64n8k32"
+	case ModShapeM64N32K32:
+		return ".m64n32k32"
 	default:
 		return ""
 	}

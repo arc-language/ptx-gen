@@ -4,7 +4,7 @@ package ptx
 type Opcode int
 
 const (
-	// ---- Integer arithmetic ----
+	// Integer arithmetic
 	OpAdd Opcode = iota
 	OpSub
 	OpMul
@@ -30,7 +30,7 @@ const (
 	OpDp2a
 	OpFns
 
-	// ---- Extended-precision integer ----
+	// Extended-precision integer
 	OpAddCC
 	OpAddc
 	OpSubCC
@@ -38,7 +38,7 @@ const (
 	OpMadCC
 	OpMadc
 
-	// ---- Floating point ----
+	// Floating point
 	OpFma
 	OpRcp
 	OpSqrt
@@ -51,13 +51,13 @@ const (
 	OpTestp
 	OpCopysign
 
-	// ---- Comparison & selection ----
+	// Comparison & selection
 	OpSet
 	OpSetp
 	OpSelp
 	OpSlct
 
-	// ---- Logic & shift ----
+	// Logic & shift
 	OpAnd
 	OpOr
 	OpXor
@@ -68,7 +68,7 @@ const (
 	OpShl
 	OpShr
 
-	// ---- Data movement & conversion ----
+	// Data movement & conversion
 	OpMov
 	OpShfl
 	OpPrmt
@@ -85,7 +85,7 @@ const (
 	OpPrefetchu
 	OpIsSpacep
 
-	// ---- Texture & surface ----
+	// Texture & surface
 	OpTex
 	OpTld4
 	OpTxq
@@ -94,14 +94,14 @@ const (
 	OpSured
 	OpSuq
 
-	// ---- Control flow ----
+	// Control flow
 	OpBra
 	OpBrxIdx
 	OpCall
 	OpRet
 	OpExit
 
-	// ---- Parallel synchronization ----
+	// Parallel synchronization
 	OpBar
 	OpBarWarp
 	OpBarWarpSync
@@ -119,7 +119,7 @@ const (
 	OpElectSync
 	OpGriddepcontrol
 
-	// ---- Async copy ----
+	// Async copy
 	OpCpAsync
 	OpCpAsyncCommitGroup
 	OpCpAsyncWaitGroup
@@ -134,7 +134,7 @@ const (
 	OpCpReduceAsyncBulk
 	OpCpReduceAsyncBulkTensor
 
-	// ---- Multimem ----
+	// Multimem
 	OpMultimem
 	OpMultimemLdReduce
 	OpMultimemSt
@@ -142,7 +142,7 @@ const (
 	OpMultimemCpAsyncBulk
 	OpMultimemCpReduceAsyncBulk
 
-	// ---- Warp matrix (tensor core) ----
+	// Warp matrix (tensor core)
 	OpWmmaLoad
 	OpWmmaStore
 	OpWmmaMma
@@ -152,14 +152,14 @@ const (
 	OpStMatrix
 	OpMovMatrix
 
-	// ---- Tensor map ----
+	// Tensor map
 	OpTensorMap
 	OpTensormapReplace
 	OpMapA
 	OpMapa
 	OpGetCTARank
 
-	// ---- Mbarrier ----
+	// Mbarrier
 	OpMbarrierInit
 	OpMbarrierInval
 	OpMbarrierArrive
@@ -170,7 +170,7 @@ const (
 	OpMbarrierCompleteTx
 	OpMbarrierPendingCount
 
-	// ---- Vector / SIMD ----
+	// Vector / SIMD
 	OpVadd
 	OpVadd2
 	OpVadd4
@@ -195,7 +195,7 @@ const (
 	OpVshr
 	OpVmad
 
-	// ---- Misc ----
+	// Misc
 	OpTrap
 	OpBrkpt
 	OpDiscard
@@ -206,6 +206,23 @@ const (
 	OpCreatePolicy
 	OpApplyPriority
 	OpIstypep
+
+	// Cluster launch control
+	OpTensormapCpFenceproxy
+	OpClusterlaunchcontrolTryCancel
+	OpClusterlaunchcontrolQueryCancel
+
+	// Warp matrix aliases
+	OpLdmatrix
+	OpStmatrix
+	OpMovmatrix
+
+	// WGMMA
+	OpWgmmaFence
+	OpWgmmaCommitGroup
+	OpWgmmaWaitGroup
+	OpWgmmaMmaAsync
+	OpFenceProxyAsync
 )
 
 func (o Opcode) String() string {
@@ -552,6 +569,28 @@ func (o Opcode) String() string {
 		return "applypriority"
 	case OpIstypep:
 		return "istypep"
+	case OpTensormapCpFenceproxy:
+		return "tensormap.cp_fenceproxy"
+	case OpClusterlaunchcontrolTryCancel:
+		return "clusterlaunchcontrol.try_cancel"
+	case OpClusterlaunchcontrolQueryCancel:
+		return "clusterlaunchcontrol.query_cancel"
+	case OpLdmatrix:
+		return "ldmatrix"
+	case OpStmatrix:
+		return "stmatrix"
+	case OpMovmatrix:
+		return "movmatrix"
+	case OpWgmmaFence:
+		return "wgmma.fence"
+	case OpWgmmaCommitGroup:
+		return "wgmma.commit_group"
+	case OpWgmmaWaitGroup:
+		return "wgmma.wait_group"
+	case OpWgmmaMmaAsync:
+		return "wgmma.mma_async"
+	case OpFenceProxyAsync:
+		return "fence.proxy.async"
 	default:
 		return "unknown"
 	}
