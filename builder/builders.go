@@ -1247,15 +1247,6 @@ func Tcgen05Mma(kind, ctaGroup ptx.Modifier, instrDesc, smemDescA, smemDescB, tm
     }
 }
 
-// Tcgen05Commit commits grouped operations.
-// ctaGroup: ptx.ModCtaGroup1 or ptx.ModCtaGroup2.
-func Tcgen05Commit(ctaGroup ptx.Modifier) *Instruction {
-    return &Instruction{
-        Op:        ptx.OpTcgen05Commit,
-        Modifiers: []ptx.Modifier{ctaGroup, ptx.ModSync, ptx.ModAligned},
-    }
-}
-
 // Tcgen05Fence fences memory accesses.
 // waitType: ptx.ModWaitLd or ptx.ModWaitSt (context dependent usage, usually before ld/st).
 func Tcgen05Fence(waitType ptx.Modifier) *Instruction {
@@ -1460,5 +1451,178 @@ func Tcgen05FenceSync(syncType ptx.Modifier) *Instruction {
     return &Instruction{
         Op:        ptx.OpTcgen05Fence,
         Modifiers: []ptx.Modifier{syncType},
+    }
+}
+
+
+// Brkpt suspends execution (breakpoint).
+func Brkpt() *Instruction {
+    return &Instruction{Op: ptx.OpBrkpt}
+}
+
+// NanoSleep suspends the thread for approx 't' nanoseconds.
+// t: register or immediate (u32).
+func NanoSleep(t Operand) *Instruction {
+    return &Instruction{
+        Op:  ptx.OpNanoSleep,
+        Src: []Operand{t},
+        Typ: ptx.U32,
+    }
+}
+
+
+// Tcgen05Commit tracks completion of prior async operations.
+// Syntax: tcgen05.commit.cta_group.completion_mechanism{.shared::cluster}{.multicast}.b64 [mbar] {, ctaMask};
+//
+// ctaGroup: ptx.ModCtaGroup1 or ptx.ModCtaGroup2
+// mbar: mbarrier address operand
+// ctaMask: optional 16-bit mask for multicast (requires ptx.ModMulticastCluster)
+func Tcgen05Commit(ctaGroup ptx.Modifier, mbar Operand, ctaMask ...Operand) *Instruction {
+    srcs := []Operand{mbar}
+    if len(ctaMask) > 0 {
+        srcs = append(srcs, ctaMask...)
+    }
+    
+    // Base modifiers required by spec
+    mods := []ptx.Modifier{
+        ctaGroup,
+        ptx.ModMbarrierArriveOne, // .mbarrier::arrive::one
+        ptx.ModTypeB64,           // .b64
+    }
+    
+    return &Instruction{
+        Op:        ptx.OpTcgen05Commit,
+        Src:       srcs,
+        Modifiers: mods,
+    }
+}
+
+
+
+// --- Video Instructions (Scalar) ---
+
+// Vadd performs scalar video addition: d = a + b (+ c).
+// dtype, atype, btype: .u32 or .s32
+// extras: optional 'c' operand (for merge/accumulate) or modifiers (.sat, .add, .min, .max, selectors .b0, .h1, etc.)
+func Vadd(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVadd, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vsub performs scalar video subtraction: d = a - b (+ c).
+func Vsub(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVsub, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vabsdiff performs scalar video absolute difference: d = |a - b| (+ c).
+func Vabsdiff(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVabsdiff, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vmin performs scalar video minimum.
+func Vmin(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVmin, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vmax performs scalar video maximum.
+func Vmax(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVmax, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vshl performs scalar video shift left.
+// Note: middle types are .atype.u32 (btype is always u32 for shift amount).
+func Vshl(dtype, atype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVshl, dtype, atype, ptx.ModTypeU32, dst, a, b, extras...)
+}
+
+// Vshr performs scalar video shift right.
+func Vshr(dtype, atype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVshr, dtype, atype, ptx.ModTypeU32, dst, a, b, extras...)
+}
+
+// Vmad performs scalar video multiply-accumulate: d = a * b + c.
+// Supports .po (plus one) and scaling via modifiers in extras.
+func Vmad(dtype, atype, btype ptx.Modifier, dst, a, b, c Operand, extras ...Operand) *Instruction {
+    // Vmad always takes 3 sources
+    args := []Operand{c} 
+    args = append(args, extras...)
+    return buildVideoInst(ptx.OpVmad, dtype, atype, btype, dst, a, b, args...)
+}
+
+// Vset performs scalar video comparison.
+// cmp: ptx.CmpEq, ptx.CmpLt, etc.
+func Vset(atype, btype ptx.Modifier, cmp ptx.CmpOp, dst, a, b Operand, extras ...Operand) *Instruction {
+    inst := buildVideoInst(ptx.OpVset, atype, btype, 0, dst, a, b, extras...)
+    inst.Cmp = cmp
+    return inst
+}
+
+// --- Video Instructions (SIMD: .v2 and .v4) ---
+
+// Vadd2 performs dual half-word addition.
+func Vadd2(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVadd2, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vsub2 performs dual half-word subtraction.
+func Vsub2(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVsub2, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vavrg2 performs dual half-word average.
+func Vavrg2(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVavrg2, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vset2 performs dual half-word comparison.
+func Vset2(atype, btype ptx.Modifier, cmp ptx.CmpOp, dst, a, b Operand, extras ...Operand) *Instruction {
+    inst := buildVideoInst(ptx.OpVset2, atype, btype, 0, dst, a, b, extras...)
+    inst.Cmp = cmp
+    return inst
+}
+
+// Vadd4 performs quad byte addition.
+func Vadd4(dtype, atype, btype ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    return buildVideoInst(ptx.OpVadd4, dtype, atype, btype, dst, a, b, extras...)
+}
+
+// Vset4 performs quad byte comparison.
+func Vset4(atype, btype ptx.Modifier, cmp ptx.CmpOp, dst, a, b Operand, extras ...Operand) *Instruction {
+    inst := buildVideoInst(ptx.OpVset4, atype, btype, 0, dst, a, b, extras...)
+    inst.Cmp = cmp
+    return inst
+}
+
+// --- Helper for Video Instructions ---
+
+func buildVideoInst(op ptx.Opcode, m1, m2, m3 ptx.Modifier, dst, a, b Operand, extras ...Operand) *Instruction {
+    srcs := []Operand{a, b}
+    
+    // Filter operands vs modifiers from extras (e.g., 'c' operand vs .sat)
+    // In PTX video instructions, 'c' is the 3rd source if present.
+    // We assume any Operand in extras is 'c', any Modifier is a modifier.
+    // Note: The caller might pass 'c' as the first element of extras.
+    
+    // Base modifiers: dtype, atype, btype
+    mods := []ptx.Modifier{m1, m2}
+    if m3 != 0 {
+        mods = append(mods, m3)
+    }
+
+    // Since our Instruction struct separates Src operands from Modifiers,
+    // we don't need to manually filter if the user constructs 'extras' carefully,
+    // but typically builder helpers don't mix them in one varargs. 
+    // However, to support the signature `extras ...Operand` we assume extras contains 'c'.
+    // If the user wants to add .sat, they should use .WithMod() on the result.
+    // EXCEPT: if the user passes 'c', it must go into Src.
+    
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+
+    return &Instruction{
+        Op:        op,
+        Dst:       dst,
+        Src:       srcs,
+        Modifiers: mods,
     }
 }

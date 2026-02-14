@@ -548,6 +548,29 @@ const (
 	// Miscellaneous
 	ModTypeB32
 	ModRed
+
+	// Video/SIMD Selectors & Masks
+    ModB0  // .b0
+    ModB1                   // .b1
+    ModB2                   // .b2
+    ModB3                   // .b3
+    ModH0                   // .h0
+    ModH1                   // .h1
+    ModH10                  // .h10
+    ModB00                  // .b00
+    ModB10                  // .b10
+    ModB3210                // .b3210 (default)
+    ModB7654                // .b7654
+
+    // Video Scaling & Modes
+    ModShr7   // .shr7
+    ModShr15  // .shr15
+    ModPo     // .po (plus one)
+
+    // Tcgen05 Completion
+    ModMbarrierArriveOne // .mbarrier::arrive::one
+
+
 )
 
 func (m Modifier) String() string {
@@ -1414,6 +1437,37 @@ func (m Modifier) String() string {
 		return ".b32"
 	case ModRed:
 		return ".red"
+
+	case ModB0: 
+		return ".b0"
+    case ModB1: 
+		return ".b1"
+    case ModB2: 
+		return ".b2"
+    case ModB3: 
+		return ".b3"
+    case ModH0: 
+		return ".h0"
+    case ModH1: 
+		return ".h1"
+    case ModH10: 
+		return ".h10"
+    case ModB00: 
+		return ".b00"
+    case ModB10: 
+		return ".b10"
+    case ModB3210: 
+		return ".b3210"
+    case ModB7654: 
+		return ".b7654"
+    case ModShr7: 
+		return ".shr7"
+    case ModShr15: 
+		return ".shr15"
+    case ModPo: 
+		return ".po"
+    case ModMbarrierArriveOne: 
+		return ".mbarrier::arrive::one"
 
 	default:
 		return ""
