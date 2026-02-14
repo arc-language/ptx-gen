@@ -1176,3 +1176,136 @@ func Tld4(
 		Modifiers: []ptx.Modifier{comp, geom},
 	}
 }
+
+
+//   Txq(ptx.ModQueryWidth, r1, tex, nil)
+func Txq(query ptx.Modifier, dst Operand, tex Operand, lod Operand) *Instruction {
+	srcs := []Operand{tex}
+	mods := []ptx.Modifier{query}
+	
+	if lod != nil {
+		srcs = append(srcs, lod)
+		mods = append([]ptx.Modifier{ptx.ModLevel}, mods...) // Prepend .level
+	}
+
+	return &Instruction{
+		Op:        ptx.OpTxq,
+		Dst:       dst,
+		Src:       srcs,
+		Modifiers: mods,
+	}
+}
+
+// Istypep checks opaque variable type.
+// Usage: Istypep(ptx.ModTypeTexRef, p, tptr)
+func Istypep(typ ptx.Modifier, dstPred Operand, addr Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpIstypep,
+		Dst:       dstPred,
+		Src:       []Operand{addr},
+		Modifiers: []ptx.Modifier{typ},
+	}
+}
+
+// ---- Surface Instructions (Section 9.7.11) ----
+
+// Suld loads from surface memory.
+//
+// Arguments:
+//   geom:   Geometry (e.g., ptx.ModGeom2D)
+//   dst:    Destination vector
+//   surf:   Surface reference
+//   coords: Coordinate operands
+//
+// Usage:
+//   Suld(ptx.ModGeom2D, dst, surf, []Operand{x, y})
+//     .WithMod(ptx.ModClampTrap)
+//     .WithCache(ptx.CacheCA)
+func Suld(geom ptx.Modifier, dst Operand, surf Operand, coords []Operand) *Instruction {
+	srcs := []Operand{surf}
+	srcs = append(srcs, coords...)
+
+	return &Instruction{
+		Op:        ptx.OpSuld,
+		Dst:       dst,
+		Src:       srcs,
+		Modifiers: []ptx.Modifier{ptx.ModB, geom}, // .b (unformatted) is default logic
+	}
+}
+
+// Sust stores to surface memory.
+// Usage: Sust(ptx.ModGeom2D, surf, []Operand{x, y}, val)
+func Sust(geom ptx.Modifier, surf Operand, coords []Operand, val Operand) *Instruction {
+	srcs := []Operand{surf}
+	srcs = append(srcs, coords...)
+	srcs = append(srcs, val)
+
+	return &Instruction{
+		Op:        ptx.OpSust,
+		Src:       srcs,
+		Modifiers: []ptx.Modifier{ptx.ModB, geom},
+	}
+}
+
+// Sured reduces surface memory.
+// Usage: Sured(ptx.ModGeom2D, surf, []Operand{x, y}, val).WithMod(ptx.ModAtomAdd)
+func Sured(geom ptx.Modifier, surf Operand, coords []Operand, val Operand) *Instruction {
+	srcs := []Operand{surf}
+	srcs = append(srcs, coords...)
+	srcs = append(srcs, val)
+
+	return &Instruction{
+		Op:        ptx.OpSured,
+		Src:       srcs,
+		Modifiers: []ptx.Modifier{ptx.ModB, geom},
+	}
+}
+
+// Suq queries surface attributes.
+// Usage: Suq(ptx.ModQueryWidth, dst, surf)
+func Suq(query ptx.Modifier, dst Operand, surf Operand) *Instruction {
+	return &Instruction{
+		Op:        ptx.OpSuq,
+		Dst:       dst,
+		Src:       []Operand{surf},
+		Modifiers: []ptx.Modifier{query},
+	}
+}
+
+// ---- Advanced Control Flow (Section 9.7.12) ----
+
+// BrxIdx branches to a label indexed from a list.
+// targetList must be a label pointing to a .branchtargets directive.
+// Usage: BrxIdx(idx, Sym("L_targets")).WithMod(ptx.ModUni)
+func BrxIdx(index Operand, targetList Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpBrxIdx,
+		Src: []Operand{index, targetList},
+	}
+}
+
+// CallIndirect performs an indirect function call.
+//
+// Arguments:
+//   funcPtr:   Register holding function address
+//   retParams: Optional return operands
+//   args:      Call arguments
+//   proto:     Prototype label (.callprototype) OR Target list label (.calltargets)
+//
+// Usage:
+//   CallIndirect(fptr, ret, args, Sym("Fproto"))
+func CallIndirect(funcPtr Operand, retParams []Operand, args []Operand, proto Operand) *Instruction {
+	srcs := []Operand{funcPtr}
+	srcs = append(srcs, args...)
+	srcs = append(srcs, proto)
+
+	inst := &Instruction{
+		Op:  ptx.OpCall,
+		Src: srcs,
+	}
+	
+	if len(retParams) > 0 {
+		inst.Dst = retParams[0]
+	}
+	return inst
+}

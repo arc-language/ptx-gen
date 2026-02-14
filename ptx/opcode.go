@@ -222,6 +222,9 @@ const (
 
 	// ---- Tensormap (Section 9.7.9.28) ----
 	OpTensormapReplace // tensormap.replace
+
+	// ---- Texture & Surface Queries (Section 9.7.10.5) ----
+	OpIstypep // istypep
 )
 
 func (o Opcode) String() string {
@@ -554,7 +557,8 @@ func (o Opcode) String() string {
         return "multimem.cp.reduce.async.bulk"
     case OpCpAsyncBulkTensor:
         return "cp.async.bulk.tensor"
-
+	case OpIstypep:
+			return "istypep"
 	case OpCpReduceAsyncBulkTensor:
 		return "cp.reduce.async.bulk.tensor"
 	case OpCpAsyncBulkPrefetchTensor:

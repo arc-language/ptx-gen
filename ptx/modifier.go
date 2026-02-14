@@ -204,12 +204,45 @@ const (
 	ModFieldInterleave      // .interleave_layout
 	ModFieldSwizzleMode     // .swizzle_mode
 	ModFieldSwizzleAtom     // .swizzle_atomicity
-	ModFieldFillMode        // .fill_mode
+    ModFieldFillMode Modifier = iota + 650 // Aligning
 
 	// --- Misc ---
 	ModRead // .read (for cp.async.bulk.wait_group)
 
     ModLevelL2 Modifier = iota + 600 // .L2
+
+
+
+
+	// --- Texture & Surface Query Attributes (txq, suq) ---
+	ModQueryWidth                  // .width
+	ModQueryHeight                 // .height
+	ModQueryDepth                  // .depth
+	ModQueryChannelDataType        // .channel_data_type
+	ModQueryChannelOrder           // .channel_order
+	ModQueryNormalizedCoords       // .normalized_coords
+	ModQueryForceUnnormCoords      // .force_unnormalized_coords
+	ModQueryFilterMode             // .filter_mode
+	ModQueryAddrMode0              // .addr_mode_0
+	ModQueryAddrMode1              // .addr_mode_1
+	ModQueryAddrMode2              // .addr_mode_2
+	ModQueryArraySize              // .array_size
+	ModQueryNumMipmapLevels        // .num_mipmap_levels
+	ModQueryNumSamples             // .num_samples
+	ModQueryMemoryLayout           // .memory_layout
+
+	// --- Surface Clamp Modes ---
+	ModClampTrap  // .trap (as modifier for suld/sust)
+	ModClampClamp // .clamp (reusing ModClamp name if possible, else alias)
+	ModClampZero  // .zero
+
+	// --- Type Checks ---
+	ModTypeTexRef     // .texref (istypep)
+	ModTypeSamplerRef // .samplerref
+	ModTypeSurfRef    // .surfref
+
+    ModB Modifier = iota + 700 // .b (unformatted/byte)
+    ModP                       // .p (formatted/element)
 )
 
 func (m Modifier) String() string {
@@ -502,6 +535,59 @@ func (m Modifier) String() string {
         return ".L2"
 	case ModRead:
 		return ".read"
+
+
+    // Query Attributes
+	case ModQueryWidth:
+		return ".width"
+	case ModQueryHeight:
+		return ".height"
+	case ModQueryDepth:
+		return ".depth"
+	case ModQueryChannelDataType:
+		return ".channel_data_type"
+	case ModQueryChannelOrder:
+		return ".channel_order"
+	case ModQueryNormalizedCoords:
+		return ".normalized_coords"
+	case ModQueryForceUnnormCoords:
+		return ".force_unnormalized_coords"
+	case ModQueryFilterMode:
+		return ".filter_mode"
+	case ModQueryAddrMode0:
+		return ".addr_mode_0"
+	case ModQueryAddrMode1:
+		return ".addr_mode_1"
+	case ModQueryAddrMode2:
+		return ".addr_mode_2"
+	case ModQueryArraySize:
+		return ".array_size"
+	case ModQueryNumMipmapLevels:
+		return ".num_mipmap_levels"
+	case ModQueryNumSamples:
+		return ".num_samples"
+	case ModQueryMemoryLayout:
+		return ".memory_layout"
+
+	// Surface Clamp
+	case ModClampTrap:
+		return ".trap"
+	case ModClampZero:
+		return ".zero"
+	// ModClamp is already defined as ".clamp" in previous batch
+
+	// Type Checks
+	case ModTypeTexRef:
+		return ".texref"
+	case ModTypeSamplerRef:
+		return ".samplerref"
+	case ModTypeSurfRef:
+		return ".surfref"
+
+    case ModB:
+        return ".b"
+    case ModP:
+        return ".p"
 
     default:
         return ""
