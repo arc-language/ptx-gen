@@ -1146,3 +1146,322 @@ func FenceProxyAsync(scope ptx.Scope) *Instruction {
 		Scope: scope,
 	}
 }
+
+
+// WgmmaMmaAsync creates a wgmma.mma_async instruction.
+//
+// Variants:
+// 1. FP16/BF16: d, a, b, scaleD, immScaleA, immScaleB, immTransA, immTransB
+// 2. TF32/FP8:  d, a, b, scaleD, immScaleA, immScaleB
+// 3. Int/Bit:   d, a, b, scaleD
+//
+// Modifiers required: Shape (.m64...), Dtype (.f32, .s32), Atype (.f16...), Btype.
+// Usage example:
+//   WgmmaMmaAsync(
+//     ModShapeM64N128K16, ModTypeF32, ModTypeF16, ModTypeF16,
+//     d, a, b, scaleD, Imm(1), Imm(1), Imm(0), Imm(0)
+//   )
+func WgmmaMmaAsync(
+    shape ptx.Modifier,
+    dtype, atype, btype ptx.Modifier, // e.g. ModTypeF32, ModTypeF16, ModTypeF16
+    d, a, b, scaleD Operand,
+    extras ...Operand, // Immediates for scaling/transpose
+) *Instruction {
+    srcs := []Operand{a, b, scaleD}
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+    
+    return &Instruction{
+        Op:  ptx.OpWgmmaMmaAsync,
+        Dst: d,
+        Src: srcs,
+        Modifiers: []ptx.Modifier{
+            ptx.ModSync,
+            ptx.ModAligned,
+            shape,
+            dtype,
+            atype,
+            btype,
+        },
+    }
+}
+
+
+
+// WgmmaMmaAsyncSparse creates a sparse wgmma.mma_async.sp instruction.
+//
+// Syntax: wgmma.mma_async.sp.sync.aligned.shape.dtype.atype.btype d, a, b, sp-meta, sp-sel, scale-d, [imms...]
+//
+// spMeta: sparsity metadata register or immediate.
+// spSel: sparsity selector immediate (0 or 1 for f16/tf32, 0 for int/fp8).
+//
+// To add optional modifiers like .satfinite (for integer types), chain .WithMod(ptx.ModSatFinite).
+func WgmmaMmaAsyncSparse(
+    shape ptx.Modifier,
+    dtype, atype, btype ptx.Modifier,
+    d, a, b, spMeta, spSel, scaleD Operand,
+    extras ...Operand, // Immediates for scaling/transpose
+) *Instruction {
+    srcs := []Operand{a, b, spMeta, spSel, scaleD}
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+
+    return &Instruction{
+        Op:  ptx.OpWgmmaMmaAsync,
+        Dst: d,
+        Src: srcs,
+        Modifiers: []ptx.Modifier{
+            ptx.ModSp, // .sp
+            ptx.ModSync,
+            ptx.ModAligned,
+            shape,
+            dtype,
+            atype,
+            btype,
+        },
+    }
+}
+
+
+
+// --- 5th Gen Tensor Core (tcgen05) ---
+
+// Tcgen05Mma performs Matrix Multiply-Accumulate.
+// kind: e.g., ptx.ModKindTf32.
+// ctaGroup: ptx.ModCtaGroup1 or ptx.ModCtaGroup2.
+// instrDesc: Instruction Descriptor (32-bit register or immediate).
+// smemDescA, smemDescB: Shared Memory Descriptors.
+func Tcgen05Mma(kind, ctaGroup ptx.Modifier, instrDesc, smemDescA, smemDescB, tmemD, tmemC Operand) *Instruction {
+    // Note: tmemC is optional in some contexts but typical for MMA (D = A*B + C).
+    // The instruction signature is: tcgen05.mma... desc, descA, descB, tmemD, tmemC
+    srcs := []Operand{instrDesc, smemDescA, smemDescB, tmemD}
+    if tmemC != nil {
+        srcs = append(srcs, tmemC)
+    }
+    return &Instruction{
+        Op:        ptx.OpTcgen05Mma,
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ctaGroup, ptx.ModSync, ptx.ModAligned, kind},
+    }
+}
+
+// Tcgen05Commit commits grouped operations.
+// ctaGroup: ptx.ModCtaGroup1 or ptx.ModCtaGroup2.
+func Tcgen05Commit(ctaGroup ptx.Modifier) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Commit,
+        Modifiers: []ptx.Modifier{ctaGroup, ptx.ModSync, ptx.ModAligned},
+    }
+}
+
+// Tcgen05Fence fences memory accesses.
+// waitType: ptx.ModWaitLd or ptx.ModWaitSt (context dependent usage, usually before ld/st).
+func Tcgen05Fence(waitType ptx.Modifier) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Fence,
+        Modifiers: []ptx.Modifier{waitType, ptx.ModSync, ptx.ModAligned},
+    }
+}
+
+
+
+
+
+// Tcgen05Alloc allocates Tensor Memory.
+// Syntax: tcgen05.alloc.cta_group.sync.aligned{.shared::cta}.b32 [dst], nCols;
+func Tcgen05Alloc(ctaGroup ptx.Modifier, dstAddr, nCols Operand) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Alloc,
+        Src:       []Operand{dstAddr, nCols},
+        Modifiers: []ptx.Modifier{ctaGroup, ptx.ModSync, ptx.ModAligned, ptx.ModSpaceSharedCTA, ptx.ModTypeB32},
+    }
+}
+
+// Tcgen05Dealloc deallocates Tensor Memory.
+// Syntax: tcgen05.dealloc.cta_group.sync.aligned.b32 taddr, nCols;
+func Tcgen05Dealloc(ctaGroup ptx.Modifier, tAddr, nCols Operand) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Dealloc,
+        Src:       []Operand{tAddr, nCols},
+        Modifiers: []ptx.Modifier{ctaGroup, ptx.ModSync, ptx.ModAligned, ptx.ModTypeB32},
+    }
+}
+
+// Tcgen05RelinquishAllocPermit releases allocation rights.
+// Syntax: tcgen05.relinquish_alloc_permit.cta_group.sync.aligned;
+func Tcgen05RelinquishAllocPermit(ctaGroup ptx.Modifier) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05RelinquishAllocPermit,
+        Modifiers: []ptx.Modifier{ctaGroup, ptx.ModSync, ptx.ModAligned},
+    }
+}
+
+// Tcgen05Ld loads from Tensor Memory to registers.
+// Syntax: tcgen05.ld.sync.aligned.shape.num{.pack}.b32 r, [taddr], {immHalfSplitoff};
+func Tcgen05Ld(shape, num ptx.Modifier, dst, tAddr Operand, splitOff ...Operand) *Instruction {
+    srcs := []Operand{tAddr}
+    if len(splitOff) > 0 {
+        srcs = append(srcs, splitOff...)
+    }
+    return &Instruction{
+        Op:        ptx.OpTcgen05Ld,
+        Dst:       dst,
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ptx.ModSync, ptx.ModAligned, shape, num, ptx.ModTypeB32},
+    }
+}
+
+// Tcgen05LdRed performs load with reduction.
+// Syntax: tcgen05.ld.red.sync.aligned.shape.num.redOp{.abs}{.NaN}.type r, redval, [taddr], {immHalfSplitoff};
+func Tcgen05LdRed(shape, num, redOp, typ ptx.Modifier, dst, redVal, tAddr Operand, splitOff ...Operand) *Instruction {
+    srcs := []Operand{tAddr}
+    if len(splitOff) > 0 {
+        srcs = append(srcs, splitOff...)
+    }
+    // Note: Dst needs to handle both 'r' (vector) and 'redval' (scalar). 
+    // In our IR, we might need to handle multi-destination or structure the Dst operand to include both.
+    // For now, assuming the caller passes a combined operand or handles it via custom assembly emission.
+    return &Instruction{
+        Op:        ptx.OpTcgen05Ld,
+        Dst:       dst, // Should encompass r and redval
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ptx.OpRed, ptx.ModSync, ptx.ModAligned, shape, num, redOp, typ},
+    }
+}
+
+// Tcgen05St stores from registers to Tensor Memory.
+// Syntax: tcgen05.st.sync.aligned.shape.num{.unpack}.b32 [taddr], {immHalfSplitoff}, r;
+func Tcgen05St(shape, num ptx.Modifier, tAddr, src Operand, splitOff ...Operand) *Instruction {
+    srcs := []Operand{tAddr}
+    if len(splitOff) > 0 {
+        srcs = append(srcs, splitOff...)
+    }
+    srcs = append(srcs, src)
+    return &Instruction{
+        Op:        ptx.OpTcgen05St,
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ptx.ModSync, ptx.ModAligned, shape, num, ptx.ModTypeB32},
+    }
+}
+
+// Tcgen05Wait waits for previous loads or stores.
+// Syntax: tcgen05.wait::ld.sync.aligned;
+// waitType: ptx.ModWaitLd or ptx.ModWaitSt.
+func Tcgen05Wait(waitType ptx.Modifier) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Wait,
+        Modifiers: []ptx.Modifier{waitType, ptx.ModSync, ptx.ModAligned},
+    }
+}
+
+// Tcgen05Cp initiates asynchronous copy.
+// Syntax: tcgen05.cp.cta_group.shape{.multicast}{.dst_fmt.src_fmt} [taddr], s-desc;
+// Optional format modifiers can be chained via .WithMod().
+func Tcgen05Cp(ctaGroup, shape ptx.Modifier, tAddr, sDesc Operand) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Cp,
+        Src:       []Operand{tAddr, sDesc},
+        Modifiers: []ptx.Modifier{ctaGroup, shape},
+    }
+}
+
+// Tcgen05Shift shifts rows in Tensor Memory.
+// Syntax: tcgen05.shift.cta_group.down [taddr];
+func Tcgen05Shift(ctaGroup ptx.Modifier, tAddr Operand) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Shift,
+        Src:       []Operand{tAddr},
+        Modifiers: []ptx.Modifier{ctaGroup, ptx.ModShiftDown},
+    }
+}
+
+
+// --- 5th Gen Tensor Core (tcgen05) Advanced MMA ---
+
+// Tcgen05MmaSp performs Sparse Matrix Multiply-Accumulate.
+// Syntax: tcgen05.mma.sp... [d], a, b, [sp-meta], idesc, ...
+// Note: spMetaAddr is the address of the metadata in Tensor Memory.
+func Tcgen05MmaSp(
+    kind, ctaGroup ptx.Modifier,
+    dAddr, aDesc, bDesc, spMetaAddr, iDesc Operand,
+    extras ...Operand, // disable-output-lane, enable-input-d, etc.
+) *Instruction {
+    srcs := []Operand{aDesc, bDesc, spMetaAddr, iDesc}
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+    return &Instruction{
+        Op:        ptx.OpTcgen05Mma,
+        Dst:       dAddr, // [d-tmem] is conceptually a destination here
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ptx.ModSp, ctaGroup, kind},
+    }
+}
+
+// Tcgen05MmaWs performs Weight Stationary MMA.
+// Syntax: tcgen05.mma.ws... [d], a, b, idesc, ...
+func Tcgen05MmaWs(
+    kind, ctaGroup ptx.Modifier,
+    dAddr, aDesc, bDesc, iDesc Operand,
+    extras ...Operand, // enable-input-d, zero-column-mask-desc
+) *Instruction {
+    srcs := []Operand{aDesc, bDesc, iDesc}
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+    return &Instruction{
+        Op:        ptx.OpTcgen05Mma,
+        Dst:       dAddr,
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ptx.ModWS, ctaGroup, kind},
+    }
+}
+
+// Tcgen05MmaWsSp performs Sparse Weight Stationary MMA.
+// Syntax: tcgen05.mma.ws.sp... [d], a, b, [sp-meta], idesc, ...
+func Tcgen05MmaWsSp(
+    kind, ctaGroup ptx.Modifier,
+    dAddr, aDesc, bDesc, spMetaAddr, iDesc Operand,
+    extras ...Operand,
+) *Instruction {
+    srcs := []Operand{aDesc, bDesc, spMetaAddr, iDesc}
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+    return &Instruction{
+        Op:        ptx.OpTcgen05Mma,
+        Dst:       dAddr,
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ptx.ModWS, ptx.ModSp, ctaGroup, kind},
+    }
+}
+
+// Tcgen05MmaScaled performs MMA with Block Scaling.
+// Syntax: tcgen05.mma... [d], a, b, idesc, [scaleA], [scaleB], ...
+func Tcgen05MmaScaled(
+    kind, ctaGroup, scaleVec ptx.Modifier,
+    dAddr, aDesc, bDesc, iDesc, scaleAAddr, scaleBAddr Operand,
+    extras ...Operand,
+) *Instruction {
+    srcs := []Operand{aDesc, bDesc, iDesc, scaleAAddr, scaleBAddr}
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+    return &Instruction{
+        Op:        ptx.OpTcgen05Mma,
+        Dst:       dAddr,
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{ctaGroup, kind, ptx.ModBlockScale, scaleVec},
+    }
+}
+
+// Tcgen05FenceSync performs specialized thread synchronization.
+// syncType: ptx.ModBeforeThreadSync or ptx.ModAfterThreadSync
+func Tcgen05FenceSync(syncType ptx.Modifier) *Instruction {
+    return &Instruction{
+        Op:        ptx.OpTcgen05Fence,
+        Modifiers: []ptx.Modifier{syncType},
+    }
+}

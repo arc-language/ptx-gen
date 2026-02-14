@@ -355,6 +355,216 @@ const (
 
 	// M64 K256 shapes
 	ModShapeM64N8K256
+
+
+    ModShapeM64N136K16
+    ModShapeM64N144K16
+    ModShapeM64N152K16
+    ModShapeM64N160K16
+    ModShapeM64N168K16
+    ModShapeM64N176K16
+    ModShapeM64N184K16
+    ModShapeM64N192K16
+    ModShapeM64N200K16
+    ModShapeM64N208K16
+    ModShapeM64N216K16
+    ModShapeM64N224K16
+    ModShapeM64N232K16
+    ModShapeM64N240K16
+    ModShapeM64N248K16
+
+    // M64 N* K8 (tf32)
+    ModShapeM64N24K8
+    ModShapeM64N40K8
+    ModShapeM64N48K8
+    ModShapeM64N56K8
+    ModShapeM64N64K8
+    ModShapeM64N72K8
+    ModShapeM64N80K8
+    ModShapeM64N88K8
+    ModShapeM64N96K8
+    ModShapeM64N104K8
+    ModShapeM64N112K8
+    ModShapeM64N120K8
+    ModShapeM64N128K8
+    ModShapeM64N136K8
+    ModShapeM64N144K8
+    ModShapeM64N152K8
+    ModShapeM64N160K8
+    ModShapeM64N168K8
+    ModShapeM64N176K8
+    ModShapeM64N184K8
+    ModShapeM64N192K8
+    ModShapeM64N200K8
+    ModShapeM64N208K8
+    ModShapeM64N216K8
+    ModShapeM64N224K8
+    ModShapeM64N232K8
+    ModShapeM64N240K8
+    ModShapeM64N248K8
+    ModShapeM64N256K8
+
+    // M64 N* K32 (fp8, int)
+    ModShapeM64N24K32
+    ModShapeM64N40K32
+    ModShapeM64N48K32
+    ModShapeM64N56K32
+    ModShapeM64N64K32
+    ModShapeM64N72K32
+    ModShapeM64N80K32
+    ModShapeM64N88K32
+    ModShapeM64N96K32
+    ModShapeM64N104K32
+    ModShapeM64N112K32
+    ModShapeM64N120K32
+    ModShapeM64N128K32
+    ModShapeM64N136K32
+    ModShapeM64N144K32
+    ModShapeM64N152K32
+    ModShapeM64N160K32
+    ModShapeM64N168K32
+    ModShapeM64N176K32
+    ModShapeM64N184K32
+    ModShapeM64N192K32
+    ModShapeM64N208K32
+    ModShapeM64N224K32
+    ModShapeM64N240K32
+    ModShapeM64N256K32
+
+    // M64 N* K256 (b1)
+    ModShapeM64N16K256
+    ModShapeM64N24K256
+    ModShapeM64N32K256
+    ModShapeM64N48K256
+    ModShapeM64N64K256
+    ModShapeM64N80K256
+    ModShapeM64N96K256
+    ModShapeM64N112K256
+    ModShapeM64N128K256
+    ModShapeM64N144K256
+    ModShapeM64N160K256
+    ModShapeM64N176K256
+    ModShapeM64N192K256
+    ModShapeM64N208K256
+    ModShapeM64N224K256
+    ModShapeM64N240K256
+    ModShapeM64N256K256
+
+
+
+    ModShapeM64N16K64
+    ModShapeM64N24K64
+    ModShapeM64N32K64
+    ModShapeM64N40K64
+    ModShapeM64N48K64
+    ModShapeM64N56K64
+    ModShapeM64N64K64
+    ModShapeM64N72K64
+    ModShapeM64N80K64
+    ModShapeM64N88K64
+    ModShapeM64N96K64
+    ModShapeM64N104K64
+    ModShapeM64N112K64
+    ModShapeM64N120K64
+    ModShapeM64N128K64
+    ModShapeM64N136K64
+    ModShapeM64N144K64
+    ModShapeM64N152K64
+    ModShapeM64N160K64
+    ModShapeM64N168K64
+    ModShapeM64N176K64
+    ModShapeM64N184K64
+    ModShapeM64N192K64
+    ModShapeM64N200K64
+    ModShapeM64N208K64
+    ModShapeM64N216K64
+    ModShapeM64N224K64
+    ModShapeM64N232K64
+    ModShapeM64N240K64
+    ModShapeM64N248K64
+    ModShapeM64N256K64
+
+
+
+	// --- Tcgen05 Data Movement Shapes (ld/st) ---
+    ModShape16x64b
+    ModShape16x128b
+    ModShape16x256b
+    ModShape16x32bx2
+    ModShape32x32b
+
+    // --- Tcgen05 Data Movement Shapes (cp) ---
+    ModShape4x256b
+    ModShape32x128b
+    ModShape64x128b
+    ModShape128x256b
+    ModShape128x128b
+    
+    // --- Tcgen05 Shift Shape ---
+    ModShape31x256b
+
+    // --- Tcgen05 MMA Kinds ---
+    ModKindF16      // .kind::f16
+    ModKindTf32     // .kind::tf32
+    ModKindF8f6f4   // .kind::f8f6f4
+    ModKindI8       // .kind::i8
+
+    // --- Tcgen05 Wait Operations ---
+    ModWaitLd // .wait::ld
+    ModWaitSt // .wait::st
+
+    // --- Swizzle Modes (for Descriptors) ---
+    ModSwizzle32B  // 32-Byte swizzle
+    ModSwizzle64B  // 64-Byte swizzle
+    ModSwizzle128B // 128-Byte swizzle
+
+
+	// --- Tcgen05 Reduction Ops (ld.red) ---
+    ModRedMin
+    ModRedMax
+
+    // --- Tcgen05 Pack/Unpack ---
+    ModPack16b   // .pack::16b
+    ModUnpack16b // .unpack::16b
+
+    // --- Tcgen05 Copy Multicast ---
+    ModMulticastWarpX2_02_13 // .warpx2::02_13
+    ModMulticastWarpX2_01_23 // .warpx2::01_23
+    ModMulticastWarpX4       // .warpx4
+
+    // --- Tcgen05 Shift Direction ---
+    ModShiftDown // .down
+
+	// --- Tcgen05 Block Scaling Aliases ---
+    ModBlock16      // .block16 (alias for .scale_vec::4X)
+    ModBlock32      // .block32 (alias for .scale_vec::1X or .scale_vec::2X)
+
+
+// --- Tcgen05 MMA Modifiers ---
+    ModWS         // .ws
+
+    ModAShift     // .ashift
+
+
+
+    // --- Tcgen05 Collector Usage ---
+    ModCollector // .collector
+    ModBufA      // ::a
+    ModBufB0     // ::b0
+    ModBufB1     // ::b1
+    ModBufB2     // ::b2
+    ModBufB3     // ::b3
+    ModOpFill    // ::fill
+    ModOpUse     // ::use
+    ModOpLastUse // ::lastuse
+    ModOpDiscard // ::discard
+
+    // --- Tcgen05 Fence Synchronization ---
+    ModBeforeThreadSync // ::before_thread_sync
+    ModAfterThreadSync  // ::after_thread_sync
+
+
+
 )
 
 func (m Modifier) String() string {
@@ -829,6 +1039,94 @@ func (m Modifier) String() string {
 		return ".m64n8k32"
 	case ModShapeM64N32K32:
 		return ".m64n32k32"
+
+
+
+    // ... (map the rest of the K16 constants similarly)
+
+    case ModShapeM64N16K8: return ".m64n16k8"
+    // ... (map the rest of the K8 constants)
+
+    case ModShapeM64N16K32: return ".m64n16k32"
+
+    case ModShapeM64N8K256: return ".m64n8k256"
+    // ... (map the rest of the K256 constants)
+
+
+
+	case ModShapeM64N8K64: return ".m64n8k64"
+    case ModShapeM64N16K64: return ".m64n16k64"
+    case ModShapeM64N24K64: return ".m64n24k64"
+    case ModShapeM64N32K64: return ".m64n32k64"
+    case ModShapeM64N48K64: return ".m64n48k64"
+    case ModShapeM64N64K64: return ".m64n64k64"
+    case ModShapeM64N80K64: return ".m64n80k64"
+    case ModShapeM64N96K64: return ".m64n96k64"
+    case ModShapeM64N112K64: return ".m64n112k64"
+    case ModShapeM64N128K64: return ".m64n128k64"
+    case ModShapeM64N144K64: return ".m64n144k64"
+    case ModShapeM64N160K64: return ".m64n160k64"
+    case ModShapeM64N176K64: return ".m64n176k64"
+    case ModShapeM64N192K64: return ".m64n192k64"
+    case ModShapeM64N208K64: return ".m64n208k64"
+    case ModShapeM64N224K64: return ".m64n224k64"
+    case ModShapeM64N240K64: return ".m64n240k64"
+    case ModShapeM64N256K64: return ".m64n256k64"
+
+
+	case ModShape16x64b: return ".16x64b"
+    case ModShape16x128b: return ".16x128b"
+    case ModShape16x256b: return ".16x256b"
+    case ModShape16x32bx2: return ".16x32bx2"
+    case ModShape32x32b: return ".32x32b"
+    case ModShape4x256b: return ".4x256b"
+    case ModShape32x128b: return ".32x128b"
+    case ModShape64x128b: return ".64x128b"
+    case ModShape128x256b: return ".128x256b"
+    case ModShape128x128b: return ".128x128b"
+    case ModShape31x256b: return ".31x256b"
+
+    case ModKindF16: return ".kind::f16"
+    case ModKindTf32: return ".kind::tf32"
+    case ModKindF8f6f4: return ".kind::f8f6f4"
+    case ModKindI8: return ".kind::i8"
+
+    case ModWaitLd: return "::ld"
+    case ModWaitSt: return "::st"
+
+
+	case ModRedMin: return ".min"
+    case ModRedMax: return ".max"
+    case ModPack16b: return ".pack::16b"
+    case ModUnpack16b: return ".unpack::16b"
+    case ModMulticastWarpX2_02_13: return ".warpx2::02_13"
+    case ModMulticastWarpX2_01_23: return ".warpx2::01_23"
+    case ModMulticastWarpX4: return ".warpx4"
+    case ModShiftDown: return ".down"
+
+	case ModBlock16: return ".block16"
+    case ModBlock32: return ".block32"
+
+
+	case ModWS: return ".ws"
+    case ModAShift: return ".ashift"
+
+
+    case ModCollector: return ".collector"
+    case ModBufA: return "::a"
+    case ModBufB0: return "::b0"
+    case ModBufB1: return "::b1"
+    case ModBufB2: return "::b2"
+    case ModBufB3: return "::b3"
+    case ModOpFill: return "::fill"
+    case ModOpUse: return "::use"
+    case ModOpLastUse: return "::lastuse"
+    case ModOpDiscard: return "::discard"
+
+    case ModBeforeThreadSync: return "::before_thread_sync"
+    case ModAfterThreadSync: return "::after_thread_sync"
+
+
 	default:
 		return ""
 	}

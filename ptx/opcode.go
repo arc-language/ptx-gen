@@ -223,6 +223,21 @@ const (
 	OpWgmmaWaitGroup
 	OpWgmmaMmaAsync
 	OpFenceProxyAsync
+
+	// --- Tensor Core Gen 5 (sm_100+) ---
+    OpTcgen05Alloc Opcode = iota + 1000 // Ensure unique ID
+    OpTcgen05Dealloc
+    OpTcgen05RelinquishAllocPermit
+    OpTcgen05Ld
+    OpTcgen05St
+    OpTcgen05Cp
+    OpTcgen05Shift
+    OpTcgen05Mma
+    OpTcgen05Commit
+    OpTcgen05Wait
+    OpTcgen05Fence
+
+
 )
 
 func (o Opcode) String() string {
@@ -591,6 +606,32 @@ func (o Opcode) String() string {
 		return "wgmma.mma_async"
 	case OpFenceProxyAsync:
 		return "fence.proxy.async"
+
+
+	case OpTcgen05Alloc: 
+		return "tcgen05.alloc"
+    case OpTcgen05Dealloc: 
+		return "tcgen05.dealloc"
+    case OpTcgen05RelinquishAllocPermit: 
+		return "tcgen05.relinquish_alloc_permit"
+    case OpTcgen05Ld: 
+		return "tcgen05.ld"
+    case OpTcgen05St: 
+		return "tcgen05.st"
+    case OpTcgen05Cp: 
+		return "tcgen05.cp"
+    case OpTcgen05Shift: 
+		return "tcgen05.shift"
+    case OpTcgen05Mma: 
+		return "tcgen05.mma"
+    case OpTcgen05Commit: 
+		return "tcgen05.commit"
+    case OpTcgen05Wait: 
+		return "tcgen05.wait"
+    case OpTcgen05Fence: 
+		return "tcgen05.fence"
+
+
 	default:
 		return "unknown"
 	}
