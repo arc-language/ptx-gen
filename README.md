@@ -2,7 +2,7 @@
 
 A lightweight, programmatic Go library for generating NVIDIA PTX (Parallel Thread Execution) assembly code.
 
-**Current Coverage:** This library implements PTX features from sections 1 - 9.7.16.12 of the [NVIDIA PTX ISA documentation](https://docs.nvidia.com/cuda/parallel-thread-execution), including instructions, state spaces, types, and basic operations. Sections 8-14 (covering special registers, texture operations, surface operations, and advanced features) are planned for future releases.
+**Current Coverage:** This library implements PTX features from sections 1 - 10 of the [NVIDIA PTX ISA documentation](https://docs.nvidia.com/cuda/parallel-thread-execution), including instructions, state spaces, types, and basic operations. Sections 8-14 (covering special registers, texture operations, surface operations, and advanced features) are planned for future releases.
 
 `ptx-gen` allows you to build CUDA kernels and device functions dynamically at runtime using a type-safe Go API, rather than concatenating strings. It supports modern PTX features including `sm_90` (Hopper), tensor cores, asynchronous copy, and cluster management.
 
