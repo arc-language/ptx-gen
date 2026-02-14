@@ -202,6 +202,26 @@ const (
 	// ---- Data Movement (Async & packed) ----
     OpMapa                           // mapa
     OpCpAsyncWaitAll                 // cp.async.wait_all
+
+
+    // ---- New additions for PTX 8.0 / 9.1 Bulk Async & Tensor ----
+
+    OpCpAsyncBulkPrefetch       // cp.async.bulk.prefetch
+    OpMultimemCpAsyncBulk       // multimem.cp.async.bulk
+    OpMultimemCpReduceAsyncBulk // multimem.cp.reduce.async.bulk
+
+	OpCpAsyncBulkTensor Opcode = iota + 453 // Aligning
+
+	// ---- Tensor Reduction & Prefetch (Section 9.7.9.27.1.3 - 4) ----
+	OpCpReduceAsyncBulkTensor   // cp.reduce.async.bulk.tensor
+	OpCpAsyncBulkPrefetchTensor // cp.async.bulk.prefetch.tensor
+
+	// ---- Bulk Group Management (Section 9.7.9.27.2) ----
+	OpCpAsyncBulkCommitGroup // cp.async.bulk.commit_group
+	OpCpAsyncBulkWaitGroup   // cp.async.bulk.wait_group
+
+	// ---- Tensormap (Section 9.7.9.28) ----
+	OpTensormapReplace // tensormap.replace
 )
 
 func (o Opcode) String() string {
@@ -524,6 +544,27 @@ func (o Opcode) String() string {
         return "mapa"
     case OpCpAsyncWaitAll:
         return "cp.async.wait_all"
+
+
+    case OpCpAsyncBulkPrefetch:
+        return "cp.async.bulk.prefetch"
+    case OpMultimemCpAsyncBulk:
+        return "multimem.cp.async.bulk"
+    case OpMultimemCpReduceAsyncBulk:
+        return "multimem.cp.reduce.async.bulk"
+    case OpCpAsyncBulkTensor:
+        return "cp.async.bulk.tensor"
+
+	case OpCpReduceAsyncBulkTensor:
+		return "cp.reduce.async.bulk.tensor"
+	case OpCpAsyncBulkPrefetchTensor:
+		return "cp.async.bulk.prefetch.tensor"
+	case OpCpAsyncBulkCommitGroup:
+		return "cp.async.bulk.commit_group"
+	case OpCpAsyncBulkWaitGroup:
+		return "cp.async.bulk.wait_group"
+	case OpTensormapReplace:
+		return "tensormap.replace"
 
 	default:
 		return "unknown"

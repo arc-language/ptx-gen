@@ -143,7 +143,73 @@ const (
     ModSpaceGlobal        // .global
     ModSpaceShared        // .shared
     ModSpaceSharedCTA     // .shared::cta
-    ModSpaceSharedCluster // .shared::cluster
+
+    ModSpaceSharedCluster Modifier = iota + 500 // Aligning
+
+
+
+    // --- Dimensions (Section 9.7.9.27.1.2) ---
+    ModDim1D // .1d
+    ModDim2D // .2d
+    ModDim3D // .3d
+    ModDim4D // .4d
+    ModDim5D // .5d
+
+    // --- Tensor Load Modes ---
+    ModLoadTile          // .tile
+    ModLoadTileGather4   // .tile::gather4
+    ModLoadTileScatter4  // .tile::scatter4
+    ModLoadIm2Col        // .im2col
+    ModLoadIm2ColW       // .im2col::w
+    ModLoadIm2ColW128    // .im2col::w::128
+    ModLoadIm2ColNoOffs  // .im2col_no_offs
+
+    // --- CTA Groups ---
+    ModCtaGroup1 // .cta_group::1
+    ModCtaGroup2 // .cta_group::2
+
+    // --- Misc ---
+    ModNoFtz Modifier = iota + 550 // Aligning
+
+	// --- Texture Geometries (Section 9.7.10.3) ---
+	ModGeom1D    // .1d
+	ModGeom2D    // .2d
+	ModGeom3D    // .3d
+	ModGeomA1D   // .a1d
+	ModGeomA2D   // .a2d
+	ModGeomCube  // .cube
+	ModGeomACube // .acube
+	ModGeom2DMS  // .2dms
+	ModGeomA2DMS // .a2dms
+
+	// --- Texture Mipmap Modes ---
+	ModBase  // .base
+	ModLevel // .level
+	ModGrad  // .grad
+
+	// --- Texture Components (tld4) ---
+	ModCompR // .r
+	ModCompG // .g
+	ModCompB // .b
+	ModCompA // .a
+
+	// --- Tensormap Fields (tensormap.replace) ---
+	ModFieldGlobalAddr      // .global_address
+	ModFieldRank            // .rank
+	ModFieldBoxDim          // .box_dim
+	ModFieldGlobalDim       // .global_dim
+	ModFieldGlobalStride    // .global_stride
+	ModFieldElementStride   // .element_stride
+	ModFieldElemType        // .elemtype
+	ModFieldInterleave      // .interleave_layout
+	ModFieldSwizzleMode     // .swizzle_mode
+	ModFieldSwizzleAtom     // .swizzle_atomicity
+	ModFieldFillMode        // .fill_mode
+
+	// --- Misc ---
+	ModRead // .read (for cp.async.bulk.wait_group)
+
+    ModLevelL2 Modifier = iota + 600 // .L2
 )
 
 func (m Modifier) String() string {
@@ -333,6 +399,109 @@ func (m Modifier) String() string {
     case ModSpaceSharedCluster:
         return ".shared::cluster"
 
+    // Dimensions
+    case ModDim1D:
+        return ".1d"
+    case ModDim2D:
+        return ".2d"
+    case ModDim3D:
+        return ".3d"
+    case ModDim4D:
+        return ".4d"
+    case ModDim5D:
+        return ".5d"
+
+    // Load Modes
+    case ModLoadTile:
+        return ".tile"
+    case ModLoadTileGather4:
+        return ".tile::gather4"
+    case ModLoadTileScatter4:
+        return ".tile::scatter4"
+    case ModLoadIm2Col:
+        return ".im2col"
+    case ModLoadIm2ColW:
+        return ".im2col::w"
+    case ModLoadIm2ColW128:
+        return ".im2col::w::128"
+    case ModLoadIm2ColNoOffs:
+        return ".im2col_no_offs"
+
+    // CTA Groups
+    case ModCtaGroup1:
+        return ".cta_group::1"
+    case ModCtaGroup2:
+        return ".cta_group::2"
+
+    // Misc
+    case ModNoFtz:
+        return ".noftz"
+
+    // Texture Geometries
+	case ModGeom1D:
+		return ".1d"
+	case ModGeom2D:
+		return ".2d"
+	case ModGeom3D:
+		return ".3d"
+	case ModGeomA1D:
+		return ".a1d"
+	case ModGeomA2D:
+		return ".a2d"
+	case ModGeomCube:
+		return ".cube"
+	case ModGeomACube:
+		return ".acube"
+	case ModGeom2DMS:
+		return ".2dms"
+	case ModGeomA2DMS:
+		return ".a2dms"
+
+	// Mipmap
+	case ModBase:
+		return ".base"
+	case ModLevel:
+		return ".level"
+	case ModGrad:
+		return ".grad"
+
+	// Components
+	case ModCompR:
+		return ".r"
+	case ModCompG:
+		return ".g"
+	case ModCompB:
+		return ".b"
+	case ModCompA:
+		return ".a"
+
+	// Tensormap Fields
+	case ModFieldGlobalAddr:
+		return ".global_address"
+	case ModFieldRank:
+		return ".rank"
+	case ModFieldBoxDim:
+		return ".box_dim"
+	case ModFieldGlobalDim:
+		return ".global_dim"
+	case ModFieldGlobalStride:
+		return ".global_stride"
+	case ModFieldElementStride:
+		return ".element_stride"
+	case ModFieldElemType:
+		return ".elemtype"
+	case ModFieldInterleave:
+		return ".interleave_layout"
+	case ModFieldSwizzleMode:
+		return ".swizzle_mode"
+	case ModFieldSwizzleAtom:
+		return ".swizzle_atomicity"
+	case ModFieldFillMode:
+		return ".fill_mode"
+    case ModLevelL2:
+        return ".L2"
+	case ModRead:
+		return ".read"
 
     default:
         return ""

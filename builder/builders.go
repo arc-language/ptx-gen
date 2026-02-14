@@ -887,3 +887,292 @@ func CpAsyncBulk(dst, src, size Operand, args ...Operand) *Instruction {
 		Src: srcs,
 	}
 }
+
+
+
+
+// For global destination:
+//   CpReduceAsyncBulk(dstMem, srcMem, size, nil)
+//      .WithMod(ptx.ModAtomAdd, ptx.ModBulkGroup, ptx.ModL2CacheHint)
+//      .Typed(ptx.F32)
+//      .InSpace(ptx.Global)
+func CpReduceAsyncBulk(dst, src, size Operand, mbar Operand) *Instruction {
+    srcs := []Operand{dst, src, size}
+    if mbar != nil {
+        srcs = append(srcs, mbar)
+    }
+    return &Instruction{
+        Op:    ptx.OpCpReduceAsyncBulk,
+        Src:   srcs,
+        Space: ptx.SharedCTA, // Default .src is .shared::cta, .dst set via InSpace or modifiers
+    }
+}
+
+// ---- Async Bulk Prefetch (Section 9.7.9.25.4.3) ----
+
+// CpAsyncBulkPrefetch initiates asynchronous prefetch to L2.
+// Usage: CpAsyncBulkPrefetch(src, size, policy).WithMod(ptx.ModL2CacheHint)
+func CpAsyncBulkPrefetch(src, size Operand, policy Operand) *Instruction {
+    srcs := []Operand{src, size}
+    if policy != nil {
+        srcs = append(srcs, policy)
+    }
+    return &Instruction{
+        Op:  ptx.OpCpAsyncBulkPrefetch,
+        Src: srcs,
+    }
+}
+
+// ---- Multimem Async Bulk (Section 9.7.9.26) ----
+
+// MultimemCpAsyncBulk initiates async copy to multimem address range.
+// Usage: MultimemCpAsyncBulk(dst, src, size, mask).WithMod(ptx.ModBulkGroup)
+func MultimemCpAsyncBulk(dst, src, size Operand, byteMask Operand) *Instruction {
+    srcs := []Operand{dst, src, size}
+    if byteMask != nil {
+        srcs = append(srcs, byteMask)
+    }
+    return &Instruction{
+        Op:  ptx.OpMultimemCpAsyncBulk,
+        Src: srcs,
+    }
+}
+
+// ---- Multimem Async Reduce Bulk (Section 9.7.9.27) ----
+
+// MultimemCpReduceAsyncBulk initiates async reduction to multimem.
+// Usage:
+//   MultimemCpReduceAsyncBulk(dst, src, size)
+//     .WithMod(ptx.ModAtomAdd, ptx.ModBulkGroup)
+//     .Typed(ptx.U32)
+func MultimemCpReduceAsyncBulk(dst, src, size Operand) *Instruction {
+    return &Instruction{
+        Op:  ptx.OpMultimemCpReduceAsyncBulk,
+        Src: []Operand{dst, src, size},
+    }
+}
+
+// ---- Async Bulk Tensor (Section 9.7.9.27.1.2) ----
+
+// CpAsyncBulkTensor initiates an async copy of tensor data.
+//
+// Arguments:
+//   dim:        Dimensionality (.1d, .2d, ... .5d)
+//   dstMem:     Destination memory address
+//   tensorMap:  Tensor map object address
+//   coords:     Slice of operands for coordinates (tensorCoords)
+//   mbar:       Mbarrier object (optional, nil if using .bulk_group)
+//   extras:     Optional args (im2colInfo vector, ctaMask, cachePolicy)
+//
+// Usage:
+//   CpAsyncBulkTensor(ptx.ModDim2D, dst, tMap, []Operand{x, y}, mbar, nil)
+//     .InSpace(ptx.SharedCluster)
+//     .WithMod(ptx.ModMbarrierCompleteTxBytes, ptx.ModLoadTile)
+//
+// Note: .src is always .global (except for shared->global variant).
+// .dst is set via InSpace().
+func CpAsyncBulkTensor(
+    dim ptx.Modifier,
+    dstMem Operand,
+    tensorMap Operand,
+    coords []Operand,
+    mbar Operand,
+    extras []Operand,
+) *Instruction {
+    
+    // Construct the instruction.
+    // The exact operand order depends on the direction (Global->Shared vs Shared->Global).
+    // The common signature is roughly [dst], [map, coords], [mbar], ...
+    // or [map, coords], [src]
+    
+    // We assume the caller structures the "logic" of direction via InSpace/Modifiers,
+    // but the operand list in the IR must match the emitting order.
+    
+    // Since this instruction is highly polymorphic (3 different syntax variants),
+    // we collect all provided operands into Src.
+    // The emitter will simply print them comma-separated.
+    // It is up to the user to provide them in the correct order for the specific variant
+    // if using the generic builder, OR we can try to smart-pack them.
+    
+    // Standard Global -> Shared packing:
+    // [dstMem], [tensorMap, tensorCoords], [mbar]{, im2colInfo}{, ctaMask}{, policy}
+    
+    srcs := []Operand{dstMem}
+    
+    // Pack tensor map and coords into a vector-like structure if strictly following AST,
+    // but PTX syntax treats [tensorMap, coords...] as a bracketed group.
+    // Our Emitter likely handles VectorOp as {a, b}.
+    // Here we need [a, b, c].
+    // Let's create a special VectorOp or just rely on flat operands if the emitter handles it.
+    // Given the current definitions, let's pass them as distinct operands and let the user
+    // or a future specific emitter handle the brackets.
+    // However, usually `[addr]` implies an Address operand.
+    // `[tensorMap, tensorCoords]` is a list.
+    
+    // For simplicity in this IR, we will append them flatly.
+    srcs = append(srcs, tensorMap)
+    srcs = append(srcs, coords...)
+    
+    if mbar != nil {
+        srcs = append(srcs, mbar)
+    }
+    
+    if len(extras) > 0 {
+        srcs = append(srcs, extras...)
+    }
+
+    return &Instruction{
+        Op:        ptx.OpCpAsyncBulkTensor,
+        Src:       srcs,
+        Modifiers: []ptx.Modifier{dim},
+    }
+}
+
+
+// ---- Tensor Reduction Bulk (Section 9.7.9.27.1.3) ----
+
+// CpReduceAsyncBulkTensor initiates an async tensor reduction.
+//
+// Usage:
+//   CpReduceAsyncBulkTensor(ptx.ModDim2D, dstMap, []Operand{x, y}, srcMem)
+//     .WithMod(ptx.ModAtomAdd, ptx.ModBulkGroup, ptx.ModLoadTile)
+func CpReduceAsyncBulkTensor(
+	dim ptx.Modifier,
+	tensorMap Operand,
+	coords []Operand,
+	srcMem Operand,
+) *Instruction {
+	srcs := []Operand{tensorMap}
+	srcs = append(srcs, coords...)
+	srcs = append(srcs, srcMem)
+
+	return &Instruction{
+		Op:        ptx.OpCpReduceAsyncBulkTensor,
+		Src:       srcs,
+		Space:     ptx.SharedCTA, // Default .src
+		Modifiers: []ptx.Modifier{dim},
+	}
+}
+
+// ---- Tensor Prefetch Bulk (Section 9.7.9.27.1.4) ----
+
+// CpAsyncBulkPrefetchTensor initiates an async tensor prefetch to L2.
+//
+// Usage:
+//   CpAsyncBulkPrefetchTensor(ptx.ModDim5D, tensorMap, []Operand{...}, im2colInfo)
+//     .WithMod(ptx.ModLoadIm2Col)
+func CpAsyncBulkPrefetchTensor(
+    dim ptx.Modifier,
+    tensorMap Operand,
+    coords []Operand,
+    im2colInfo []Operand,
+) *Instruction {
+    srcs := []Operand{tensorMap}
+    srcs = append(srcs, coords...)
+    if len(im2colInfo) > 0 {
+        srcs = append(srcs, im2colInfo...)
+    }
+
+    return &Instruction{
+        Op:        ptx.OpCpAsyncBulkPrefetchTensor,
+        Src:       srcs,
+        // Use ModLevelL2 here, which resolves to ".L2"
+        Modifiers: []ptx.Modifier{dim, ptx.ModLevelL2}, 
+    }
+}
+
+// ---- Bulk Group Management (Section 9.7.9.27.2) ----
+
+// CpAsyncBulkCommitGroup commits uncommitted bulk async ops.
+func CpAsyncBulkCommitGroup() *Instruction {
+	return &Instruction{Op: ptx.OpCpAsyncBulkCommitGroup}
+}
+
+// CpAsyncBulkWaitGroup waits for bulk async groups.
+// Use WithMod(ptx.ModRead) for .read variant.
+func CpAsyncBulkWaitGroup(n int64) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpCpAsyncBulkWaitGroup,
+		Src: []Operand{Imm(n)},
+	}
+}
+
+// ---- Tensormap Replace (Section 9.7.9.28) ----
+
+// TensormapReplace modifies a field in a tensor map.
+// Usage:
+//   TensormapReplace(ptx.ModFieldGlobalAddr, addr, newVal).Typed(ptx.B64)
+//   TensormapReplace(ptx.ModFieldBoxDim, addr, ord, newVal).Typed(ptx.B32)
+func TensormapReplace(field ptx.Modifier, addr Operand, args ...Operand) *Instruction {
+	srcs := []Operand{addr}
+	srcs = append(srcs, args...) // args contains new_val, or ord, new_val
+	return &Instruction{
+		Op:        ptx.OpTensormapReplace,
+		Src:       srcs,
+		Modifiers: []ptx.Modifier{ptx.ModLoadTile, field}, // .tile is standard mode
+	}
+}
+
+// ---- Texture Instructions (Section 9.7.10) ----
+
+// Tex performs a texture lookup.
+//
+// Arguments:
+//   geom:    Geometry (.1d, .2d, etc.)
+//   dst:     Destination vector
+//   tex:     Texture handle (or texture array)
+//   sampler: Optional sampler (nil if using unified/implicit)
+//   coords:  Coordinate vector/operands
+//
+// Usage:
+//   Tex(ptx.ModGeom2D, dst, tex, nil, coords).Typed(ptx.S32).SourceTyped(ptx.F32)
+//
+// Use WithMod() for .base, .level, .grad.
+// Add extra operands (lod, gradient vectors) manually via custom instruction construction
+// if strict builder signature is insufficient, or extend this builder.
+func Tex(
+	geom ptx.Modifier,
+	dst Operand,
+	tex Operand,
+	sampler Operand,
+	coords []Operand,
+) *Instruction {
+	srcs := []Operand{tex}
+	if sampler != nil {
+		srcs = append(srcs, sampler)
+	}
+	// Coords are usually treated as a single vector operand or bracketed list in PTX.
+	// We append them to Src. The emitter should handle formatting `{a,b}` or `[a,b]`.
+	srcs = append(srcs, coords...)
+
+	return &Instruction{
+		Op:        ptx.OpTex,
+		Dst:       dst,
+		Src:       srcs,
+		Modifiers: []ptx.Modifier{geom},
+	}
+}
+
+// Tld4 performs a texture fetch of the 4-texel bilerp footprint.
+// Usage: Tld4(ptx.ModCompR, ptx.ModGeom2D, dst, tex, nil, coords)
+func Tld4(
+	comp ptx.Modifier,
+	geom ptx.Modifier,
+	dst Operand,
+	tex Operand,
+	sampler Operand,
+	coords []Operand,
+) *Instruction {
+	srcs := []Operand{tex}
+	if sampler != nil {
+		srcs = append(srcs, sampler)
+	}
+	srcs = append(srcs, coords...)
+
+	return &Instruction{
+		Op:        ptx.OpTld4,
+		Dst:       dst,
+		Src:       srcs,
+		Modifiers: []ptx.Modifier{comp, geom},
+	}
+}
