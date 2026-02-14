@@ -93,3 +93,22 @@ func (i *Instruction) From(t ptx.Type) *Instruction {
     i.SrcType = t
     return i
 }
+
+// WithBoolOp sets the boolean operator for set/setp (e.g., .and, .or).
+func (i *Instruction) WithBoolOp(op ptx.BoolOp) *Instruction {
+	i.BoolOp = op // Requires 'BoolOp ptx.BoolOp' field in Instruction struct
+	return i
+}
+
+// WithDst2 sets the secondary destination (e.g., q in setp p|q, ...).
+func (i *Instruction) WithDst2(dst Operand) *Instruction {
+	i.Dst2 = dst // Requires 'Dst2 Operand' field in Instruction struct
+	return i
+}
+
+// SourceTyped sets the source type for mixed-precision or conversion instructions.
+// Example: add.f32.f16 -> Typ=F32, SrcType=F16
+func (i *Instruction) SourceTyped(t ptx.Type) *Instruction {
+	i.SrcType = t
+	return i
+}

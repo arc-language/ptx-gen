@@ -65,6 +65,20 @@ const (
     ModProxy                // .proxy (Proxy fence/membar)
     ModAlias                // .alias (Alias proxy)
     ModAsync                // .async (Used in async proxy fences)
+
+    ModRelu // .relu (clamp to 0, used in min.relu)
+
+    ModCC                   // .cc (Write condition code)
+    ModClamp                // .clamp (Clamp mode for szext, bmsk)
+    ModWrap                 // .wrap (Wrap mode for szext, bmsk)
+    ModShiftAmt             // .shiftamt (Return shift amount for bfind)
+
+    ModNaN                  // .NaN (Propagate NaN)
+    ModXorsign              // .xorsign (XOR sign bits)
+    ModAbs                  // .abs (Absolute value modifier for min/max)
+
+    // --- New Modifier for Half-Precision FMA (Section 9.7.4.4) ---
+    ModOOB // .oob (Out of bounds)
 )
 
 func (m Modifier) String() string {
@@ -139,7 +153,6 @@ func (m Modifier) String() string {
         return ".or"
     case ModAtomXor:
         return ".xor"
-
     case ModWeak:
         return ".weak"
     case ModSC:
@@ -150,7 +163,24 @@ func (m Modifier) String() string {
         return ".alias"
     case ModAsync:
         return ".async"
-
+    case ModRelu:
+            return ".relu"
+    case ModCC:
+        return ".cc"
+    case ModClamp:
+        return ".clamp"
+    case ModWrap:
+        return ".wrap"
+    case ModShiftAmt:
+        return ".shiftamt"
+    case ModNaN:
+        return ".NaN"
+    case ModXorsign:
+        return ".xorsign"
+    case ModAbs:
+        return ".abs"
+    case ModOOB:
+        return ".oob"
     default:
         return ""
     }

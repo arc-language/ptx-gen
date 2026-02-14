@@ -46,6 +46,9 @@ func Min(dst, src0, src1 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMin, Dst: dst, Src: []Operand{src0, src1}}
 }
 
+// Max finds the maximum of two values.
+// Supports .relu via WithMod(ptx.ModRelu).
+// Reference: Section 9.7.1.13
 func Max(dst, src0, src1 Operand) *Instruction {
 	return &Instruction{Op: ptx.OpMax, Dst: dst, Src: []Operand{src0, src1}}
 }
@@ -76,30 +79,41 @@ func Lg2(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpLg2, Dst: dst, Src: []Operand{src}}
 }
 
+// Ex2 computes the base-2 exponential (2^a).
+// Reference: Section 9.7.4.10
 func Ex2(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpEx2, Dst: dst, Src: []Operand{src}}
 }
 
 // ---- Bit manipulation ----
-
+// Popc counts the number of one bits (population count).
+// Reference: Section 9.7.1.14
 func Popc(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpPopc, Dst: dst, Src: []Operand{src}}
 }
 
+// Clz counts the leading zeros.
+// Reference: Section 9.7.1.15
 func Clz(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpClz, Dst: dst, Src: []Operand{src}}
 }
 
+// Brev performs bitwise reversal.
+// Reference: Section 9.7.1.18
 func Brev(dst, src Operand) *Instruction {
 	return &Instruction{Op: ptx.OpBrev, Dst: dst, Src: []Operand{src}}
 }
 
+// Bfe extracts a bit field (Bit Field Extract).
+// Reference: Section 9.7.1.19
 func Bfe(dst, src, start, len Operand) *Instruction {
 	return &Instruction{Op: ptx.OpBfe, Dst: dst, Src: []Operand{src, start, len}}
 }
 
-func Bfi(dst, src, base, start, len Operand) *Instruction {
-	return &Instruction{Op: ptx.OpBfi, Dst: dst, Src: []Operand{src, base, start, len}}
+// Bfi inserts a bit field (Bit Field Insert).
+// Reference: Section 9.7.1.20
+func Bfi(dst, base, insert, start, len Operand) *Instruction {
+	return &Instruction{Op: ptx.OpBfi, Dst: dst, Src: []Operand{base, insert, start, len}}
 }
 
 // ---- Logic & shift ----
@@ -130,20 +144,45 @@ func Shr(dst, src, amount Operand) *Instruction {
 
 // ---- Comparison & selection ----
 
-func Setp(cmp ptx.CmpOp, dst, src0, src1 Operand) *Instruction {
-	return &Instruction{Op: ptx.OpSetp, Cmp: cmp, Dst: dst, Src: []Operand{src0, src1}}
+// Usage: Setp(ptx.CmpLt, p, a, b) or Setp(..., p, a, b).WithDst2(q)
+func Setp(cmp ptx.CmpOp, dst, a, b Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpSetp,
+		Cmp: cmp,
+		Dst: dst,
+		Src: []Operand{a, b},
+	}
 }
 
-func Set(cmp ptx.CmpOp, dst, src0, src1 Operand) *Instruction {
-	return &Instruction{Op: ptx.OpSet, Cmp: cmp, Dst: dst, Src: []Operand{src0, src1}}
+// Set compares two values and optionally applies a boolean op.
+// Usage: Set(ptx.CmpEq, dst, a, b).WithBoolOp(ptx.BoolAnd)
+func Set(cmp ptx.CmpOp, dst, a, b Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpSet,
+		Cmp: cmp,
+		Dst: dst,
+		Src: []Operand{a, b},
+	}
 }
 
-func Selp(dst, srcTrue, srcFalse, pred Operand) *Instruction {
-	return &Instruction{Op: ptx.OpSelp, Dst: dst, Src: []Operand{srcTrue, srcFalse, pred}}
+// Selp selects between a and b based on predicate p.
+// d = (p == 1) ? a : b
+func Selp(dst, a, b, p Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpSelp,
+		Dst: dst,
+		Src: []Operand{a, b, p},
+	}
 }
 
-func Slct(dst, src0, src1, src2 Operand) *Instruction {
-	return &Instruction{Op: ptx.OpSlct, Dst: dst, Src: []Operand{src0, src1, src2}}
+// Slct selects based on the sign of c.
+// d = (c >= 0) ? a : b
+func Slct(dst, a, b, c Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpSlct,
+		Dst: dst,
+		Src: []Operand{a, b, c},
+	}
 }
 
 // ---- Data movement ----
@@ -454,4 +493,130 @@ func StWeak(addr, src Operand) *Instruction {
 		Src:       []Operand{addr, src},
 		Modifiers: []ptx.Modifier{ptx.ModWeak},
 	}
+}
+
+// Mul24 multiplies two 24-bit integer values.
+// Reference: Section 9.7.1.5
+func Mul24(dst, src0, src1 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpMul24, Dst: dst, Src: []Operand{src0, src1}}
+}
+
+// Mad24 multiplies two 24-bit integer values and adds a third value.
+// Reference: Section 9.7.1.6
+func Mad24(dst, src0, src1, src2 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpMad24, Dst: dst, Src: []Operand{src0, src1, src2}}
+}
+
+// Fns finds the n-th set bit.
+// Reference: Section 9.7.1
+func Fns(dst, mask, base, offset Operand) *Instruction {
+	return &Instruction{Op: ptx.OpFns, Dst: dst, Src: []Operand{mask, base, offset}}
+}
+
+// Bmsk creates a bit mask.
+// Reference: Section 9.7.1
+func Bmsk(dst, pos, width Operand) *Instruction {
+	return &Instruction{Op: ptx.OpBmsk, Dst: dst, Src: []Operand{pos, width}}
+}
+
+// Szext performs sign or zero extension.
+// Reference: Section 9.7.1
+func Szext(dst, src, size Operand) *Instruction {
+	return &Instruction{Op: ptx.OpSzext, Dst: dst, Src: []Operand{src, size}}
+}
+
+// Dp4a performs a 4-way dot product with accumulation.
+// Reference: Section 9.7.1
+func Dp4a(dst, src0, src1, src2 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpDp4a, Dst: dst, Src: []Operand{src0, src1, src2}}
+}
+
+// Dp2a performs a 2-way dot product with accumulation.
+// Reference: Section 9.7.1
+func Dp2a(dst, src0, src1, src2 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpDp2a, Dst: dst, Src: []Operand{src0, src1, src2}}
+}
+
+// Bfind finds the most significant non-sign bit.
+// Use WithMod(ptx.ModShiftAmt) for bfind.shiftamt.
+// Reference: Section 9.7.1.16
+func Bfind(dst, src Operand) *Instruction {
+	return &Instruction{Op: ptx.OpBfind, Dst: dst, Src: []Operand{src}}
+}
+
+// ---- Extended-Precision Integer Arithmetic (Section 9.7.2) ----
+
+// AddCC performs addition and writes the carry-out to CC.CF (add.cc).
+func AddCC(dst, src0, src1 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpAddCC, Dst: dst, Src: []Operand{src0, src1}}
+}
+
+// Addc performs addition with carry-in (addc).
+// Use WithMod(ptx.ModCC) for addc.cc (write carry-out).
+func Addc(dst, src0, src1 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpAddc, Dst: dst, Src: []Operand{src0, src1}}
+}
+
+// SubCC performs subtraction and writes the borrow-out to CC.CF (sub.cc).
+func SubCC(dst, src0, src1 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpSubCC, Dst: dst, Src: []Operand{src0, src1}}
+}
+
+// Subc performs subtraction with borrow-in (subc).
+// Use WithMod(ptx.ModCC) for subc.cc (write borrow-out).
+func Subc(dst, src0, src1 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpSubc, Dst: dst, Src: []Operand{src0, src1}}
+}
+
+// MadCC performs multiply-add and writes carry-out to CC.CF (mad.cc).
+func MadCC(dst, src0, src1, src2 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpMadCC, Dst: dst, Src: []Operand{src0, src1, src2}}
+}
+
+// Madc performs multiply-add with carry-in (madc).
+// Use WithMod(ptx.ModCC) for madc.cc.
+func Madc(dst, src0, src1, src2 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpMadc, Dst: dst, Src: []Operand{src0, src1, src2}}
+}
+
+// ---- Floating-Point Instructions (Section 9.7.3) ----
+
+// Testp tests a floating-point property.
+// Use WithMod(...) to specify the property (e.g., ptx.ModFinite, ptx.ModNotANumber).
+// Reference: Section 9.7.3.1
+func Testp(dst, src Operand) *Instruction {
+	return &Instruction{Op: ptx.OpTestp, Dst: dst, Src: []Operand{src}}
+}
+
+// Copysign copies the sign of src0 to src1.
+// Reference: Section 9.7.3.2
+func Copysign(dst, src0, src1 Operand) *Instruction {
+	return &Instruction{Op: ptx.OpCopysign, Dst: dst, Src: []Operand{src0, src1}}
+}
+
+
+// Min3 finds the minimum of three values.
+// Reference: Section 9.7.3.11 (Introduced in PTX 8.8)
+func Min3(dst, src0, src1, src2 Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMin,
+		Dst: dst,
+		Src: []Operand{src0, src1, src2},
+	}
+}
+
+// Max3 finds the maximum of three values.
+// Reference: Section 9.7.3.12 (Introduced in PTX 8.8)
+func Max3(dst, src0, src1, src2 Operand) *Instruction {
+	return &Instruction{
+		Op:  ptx.OpMax,
+		Dst: dst,
+		Src: []Operand{src0, src1, src2},
+	}
+}
+
+// Tanh calculates the hyperbolic tangent.
+// Reference: Section 9.7.3.22
+func Tanh(dst, src Operand) *Instruction {
+	return &Instruction{Op: ptx.OpTanh, Dst: dst, Src: []Operand{src}}
 }

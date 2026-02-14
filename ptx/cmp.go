@@ -71,3 +71,27 @@ func (c CmpOp) String() string {
         return ".unknown"
     }
 }
+
+
+// BoolOp represents PTX boolean operators for set/setp instructions.
+type BoolOp int
+
+const (
+	BoolNone BoolOp = iota
+	BoolAnd         // .and
+	BoolOr          // .or
+	BoolXor         // .xor
+)
+
+func (b BoolOp) String() string {
+	switch b {
+	case BoolAnd:
+		return ".and"
+	case BoolOr:
+		return ".or"
+	case BoolXor:
+		return ".xor"
+	default:
+		return ""
+	}
+}
