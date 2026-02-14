@@ -8,22 +8,25 @@ import (
 type Instruction struct {
     Op        ptx.Opcode        // opcode: add, ld, st, mov, setp, bra, etc.
     Typ       ptx.Type          // instruction type: .u32, .f32, etc.
-    Dst       Operand           // destination operand (nil for st, bra, ret, etc.)
+    
+    Dst       Operand           // Primary destination
+    Dst2      Operand           // Secondary destination (for setp p|q)
+    
     Src       []Operand         // source operands
-    Space     ptx.StateSpace    // state space for ld/st (.global, .shared, .param, etc.)
-    Cmp       ptx.CmpOp         // comparison operator for setp/set/slct
-    Rounding  ptx.RoundingMode  // rounding modifier (.rn, .rz, .rm, .rp)
-    Cache     ptx.CacheOp       // cache operator for ld/st (.ca, .cg, .cs, etc.)
-    Scope     ptx.Scope         // memory scope for atomics/fences (.cta, .gpu, .sys)
-    Vec       ptx.VectorSize    // vector width for ld/st (.v2, .v4)
-    Modifiers []ptx.Modifier    // additional modifiers (.wide, .lo, .hi, .sat, .ftz, etc.)
-    Guard     *Predicate        // optional guard predicate (@p or @!p)
+    Space     ptx.StateSpace    // state space for ld/st
+    
+    Cmp       ptx.CmpOp         // comparison operator (.eq, .lt, etc.)
+    BoolOp    ptx.BoolOp        // boolean operator (.and, .or, .xor)
+    
+    Rounding  ptx.RoundingMode  // .rn, .rz, etc.
+    Cache     ptx.CacheOp       // .ca, .cg, etc.
+    Scope     ptx.Scope         // .cta, .gpu, etc.
+    Vec       ptx.VectorSize    // .v2, .v4
+    Modifiers []ptx.Modifier    // .wide, .lo, .sat, etc.
+    Guard     *Predicate        // @p
 
-    // For cvt: source type differs from instruction type
-    SrcType ptx.Type
-
-    // For call: function name and prototype info
-    CallTarget string
+    SrcType   ptx.Type          // For cvt (source type)
+    CallTarget string           // For call
 }
 
 // Predicate represents a guard predicate on an instruction: @p or @!p
